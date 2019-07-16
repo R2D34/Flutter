@@ -22,9 +22,9 @@ Widget _buildProductItem(BuildContext context, int index){
   @override
   Widget build(BuildContext context) {
     print('Products build method');
-    return ListView.builder(
+    return products.length > 0 ? ListView.builder(
               itemBuilder: _buildProductItem,
               itemCount: products.length,
-              );
+              ) : Center(child: Text('No Dragons in this lair'));
   }
 }
