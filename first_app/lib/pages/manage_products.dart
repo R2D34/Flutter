@@ -4,7 +4,7 @@ import 'package:first_app/pages/products.dart';
 import 'package:first_app/pages/product_create.dart';
 import 'package:first_app/pages/product_list.dart';
 
-class ManageProducts extends StatelessWidget {
+class ManageProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -17,11 +17,7 @@ class ManageProducts extends StatelessWidget {
               ListTile(
                 title: Text('Home'),
                 onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => ProductsPage()),
-                  );
+                  Navigator.pushReplacementNamed(context, '/');
                 },
               ),
             ],

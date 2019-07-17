@@ -3,51 +3,21 @@ import 'package:flutter/material.dart';
 import './products.dart';
 import './product_control.dart';
 
-class ProductManager extends StatefulWidget {
-  final Map<String, String> startingProduct;
+class ProductManager extends StatelessWidget {
 
-  ProductManager({this.startingProduct}) {
-    print('Products manager constructor');
-  }
+  final List<Map<String, String>> products;
+  final Function addProduct;
+  final Function deleteProduct;
 
-  @override
-  State<StatefulWidget> createState() {
-    print('Producst Manager createState()');
-    return _ProductManagerState();
-  }
-}
-
-class _ProductManagerState extends State<ProductManager> {
-  List<Map<String, String>> _products = [];
-
-  @override
-  void initState() {
-    print('ProductManagerStatte initState()');
-    if (widget.startingProduct != null) {
-      _products.add(widget.startingProduct);
-    }
-    super.initState();
-  }
-
-  void _addProduct(Map<String,String> product) {
-    setState(() {
-      _products.add(product);
-    });
-  }
+  ProductManager(this.products, this.addProduct, this.deleteProduct);
 
   @override
   Widget build(BuildContext context) {
     print('ProductMangareState build()');
     return Column(children: [
       Container(
-          margin: EdgeInsets.all(10.0), child: ProductControl(_addProduct,)),
-      Expanded(child: Products(_products, deleteProduct: _deleteProduct,))
+          margin: EdgeInsets.all(10.0), child: ProductControl(addProduct,)),
+      Expanded(child: Products(products, deleteProduct: deleteProduct,))
     ]);
-  }
-
-  void _deleteProduct(int index){
-    setState(() {
-     _products.removeAt(index); 
-    });
   }
 }
