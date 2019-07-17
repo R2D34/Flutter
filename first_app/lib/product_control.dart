@@ -11,7 +11,7 @@ ProductControl(this.addProduct);
     return RaisedButton(
           color: Theme.of(context).primaryColor,
           onPressed: () {
-            addProduct('DragBones');
+            addProduct({'title': 'Chocolate', 'image': 'assets/Pixel_Night_Town.gif',});
           },
           child: Text('Add product'),
         );
