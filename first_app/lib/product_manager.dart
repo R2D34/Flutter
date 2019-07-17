@@ -40,8 +40,14 @@ class _ProductManagerState extends State<ProductManager> {
     print('ProductMangareState build()');
     return Column(children: [
       Container(
-          margin: EdgeInsets.all(10.0), child: ProductControl(_addProduct)),
-      Expanded(child: Products(_products))
+          margin: EdgeInsets.all(10.0), child: ProductControl(_addProduct,)),
+      Expanded(child: Products(_products, deleteProduct: _deleteProduct,))
     ]);
+  }
+
+  void _deleteProduct(int index){
+    setState(() {
+     _products.removeAt(index); 
+    });
   }
 }
