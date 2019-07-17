@@ -15,7 +15,7 @@ class ProductsPage extends StatelessWidget {
             ListTile(
               title: Text('Tame your dragon!'),
               onTap: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => ManageProducts()),
