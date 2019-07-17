@@ -1,3 +1,4 @@
+import 'package:first_app/pages/manage_products.dart';
 import 'package:flutter/material.dart';
 
 import '../product_manager.dart';
@@ -13,7 +14,13 @@ class ProductsPage extends StatelessWidget {
             AppBar(automaticallyImplyLeading: false, title: Text('Choose')),
             ListTile(
               title: Text('Tame your dragon!'),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => ManageProducts()),
+                );
+              },
             ),
           ],
         ),
