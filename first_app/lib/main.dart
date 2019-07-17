@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './product_manager.dart';
+import 'package:first_app/pages/home.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,12 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
           primarySwatch: Colors.deepPurple, accentColor: Colors.deepOrange),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('List'),
-        ),
-        body: ProductManager(),
-      ),
+      home: HomePage() 
     );
   }
 }
