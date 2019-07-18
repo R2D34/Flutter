@@ -35,12 +35,38 @@ class ProductPage extends StatelessWidget {
               child: RaisedButton(
                 color: Theme.of(context).accentColor,
                 child: Text('Delete'),
-                onPressed: () => Navigator.pop(context, true),
+                onPressed: () => _showWarningDialog(context),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future _showWarningDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('This action cannot be undone!'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('DELETE'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context, true);
+                },
+              ),
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
   }
 }
