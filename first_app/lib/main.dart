@@ -13,25 +13,22 @@ class MyApp extends StatefulWidget {
     // TODO: implement createState
     return _MyAppState();
   }
-
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, String>> _products = []; 
+  List<Map<String, String>> _products = [];
 
-  void _addProduct(Map<String,String> product) {
+  void _addProduct(Map<String, String> product) {
     setState(() {
       _products.add(product);
     });
   }
 
-  
-  void _deleteProduct(int index){
+  void _deleteProduct(int index) {
     setState(() {
-     _products.removeAt(index); 
+      _products.removeAt(index);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +40,8 @@ class _MyAppState extends State<MyApp> {
       routes: {
         // When using slash as name of home directory
         // We cannot use the home property of MaterialApp
-        '/': (BuildContext context) => ProductsPage(_products, _addProduct, _deleteProduct),
+        '/': (BuildContext context) =>
+            ProductsPage(_products, _addProduct, _deleteProduct),
         '/admin': (BuildContext context) => ManageProductsPage(),
       },
       onGenerateRoute: (RouteSettings settings) {
@@ -55,11 +53,18 @@ class _MyAppState extends State<MyApp> {
         if (pathElements[1] == 'product') {
           final int index = int.parse(pathElements[2]);
           return MaterialPageRoute<bool>(
-            builder: (BuildContext context) =>
-                ProductPage(_products[index]['title'], _products[index]['image']),
+            builder: (BuildContext context) => ProductPage(
+                _products[index]['title'], _products[index]['image']),
           );
         }
         return null;
+      },
+      //Adding default page to go if navigation fails
+      onUnknownRoute: (RouteSettings settings) {
+        return MaterialPageRoute(
+          builder: (BuildContext context) =>
+              ProductsPage(_products, _addProduct, _deleteProduct),
+        );
       },
     );
   }
