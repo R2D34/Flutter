@@ -47,8 +47,12 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
               });
             },
           ),
+          SizedBox(
+            height: 10.0,
+          ),
           RaisedButton(
             child: Text('Save'),
+            color: Theme.of(context).accentColor,
             onPressed: () {
               final Map<String, dynamic> product = {
                 'title': titleValue,
