@@ -22,7 +22,7 @@ ManageProductsPage(this.addProduct, this.deleteProduct);
               ListTile(
                 title: Text('Home'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/');
+                  Navigator.pushReplacementNamed(context, '/products');
                 },
               ),
             ],
