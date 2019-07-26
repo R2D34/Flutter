@@ -1,4 +1,3 @@
-import 'package:first_app/pages/manage_products.dart';
 import 'package:flutter/material.dart';
 
 import '../product_manager.dart';
