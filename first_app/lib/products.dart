@@ -17,6 +17,7 @@ class Products extends StatelessWidget {
               style: TextStyle(
                 fontSize: 26.0,
                 fontWeight: FontWeight.bold,
+                fontFamily: 'Oswald',
               ),
             ),
             margin: EdgeInsets.only(top: 10.0),
