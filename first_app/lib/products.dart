@@ -52,10 +52,22 @@ class Products extends StatelessWidget {
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
-              FlatButton(
-                  child: Text('OmegaDragDetails'),
-                  onPressed: () => Navigator.pushNamed<bool>(
-                      context, '/product/' + index.toString()))
+              Row(
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.info),
+                    iconSize: 50.0,
+                    onPressed: () => Navigator.pushNamed<bool>(
+                        context, '/product/' + index.toString()),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.favorite),
+                    iconSize: 50.0,
+                    onPressed: () => Navigator.pushNamed<bool>(
+                        context, '/product/' + index.toString()),
+                  )
+                ],
+              )
             ],
           )
         ],
