@@ -4,11 +4,10 @@ import 'package:first_app/pages/product_create.dart';
 import 'package:first_app/pages/product_list.dart';
 
 class ManageProductsPage extends StatelessWidget {
-final Function addProduct;
-final Function deleteProduct;
+  final Function addProduct;
+  final Function deleteProduct;
 
-ManageProductsPage(this.addProduct, this.deleteProduct);
-
+  ManageProductsPage(this.addProduct, this.deleteProduct);
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +19,7 @@ ManageProductsPage(this.addProduct, this.deleteProduct);
             children: <Widget>[
               AppBar(automaticallyImplyLeading: false, title: Text('Choose')),
               ListTile(
+                leading: Icon(Icons.edit),
                 title: Text('Home'),
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/products');

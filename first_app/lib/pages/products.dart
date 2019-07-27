@@ -15,7 +15,7 @@ class ProductsPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             AppBar(automaticallyImplyLeading: false, title: Text('Choose')),
-            ListTile(
+            ListTile(leading: Icon(Icons.edit),
               title: Text('Tame your dragon!'),
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/admin');
