@@ -52,21 +52,19 @@ class Products extends StatelessWidget {
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.info),
-                    iconSize: 50.0,
-                    onPressed: () => Navigator.pushNamed<bool>(
-                        context, '/product/' + index.toString()),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.favorite),
-                    iconSize: 50.0,
-                    onPressed: () => Navigator.pushNamed<bool>(
-                        context, '/product/' + index.toString()),
-                  )
-                ],
+              IconButton(
+                icon: Icon(Icons.info),
+                iconSize: 50.0,
+                color: Theme.of(context).primaryColor,
+                onPressed: () => Navigator.pushNamed<bool>(
+                    context, '/product/' + index.toString()),
+              ),
+              IconButton(
+                icon: Icon(Icons.favorite_border),
+                iconSize: 50.0,
+                color: Colors.red,
+                onPressed: () => Navigator.pushNamed<bool>(
+                    context, '/product/' + index.toString()),
               )
             ],
           )
