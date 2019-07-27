@@ -38,6 +38,19 @@ class Products extends StatelessWidget {
             ),
             margin: EdgeInsets.only(top: 10.0),
           ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.grey,
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+              child: Text('The Lair of Bluescale Dragons'),
+            ),
+          ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
