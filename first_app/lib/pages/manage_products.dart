@@ -19,7 +19,7 @@ class ManageProductsPage extends StatelessWidget {
             children: <Widget>[
               AppBar(automaticallyImplyLeading: false, title: Text('Choose')),
               ListTile(
-                leading: Icon(Icons.edit),
+                leading: Icon(Icons.shop),
                 title: Text('Home'),
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/products');

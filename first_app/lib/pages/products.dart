@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../product_manager.dart';
+import '../widgets/products/products.dart';
 
 class ProductsPage extends StatelessWidget {
   final List<Map<String, dynamic>> products;
@@ -15,7 +15,8 @@ class ProductsPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             AppBar(automaticallyImplyLeading: false, title: Text('Choose')),
-            ListTile(leading: Icon(Icons.edit),
+            ListTile(
+              leading: Icon(Icons.edit),
               title: Text('Tame your dragon!'),
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/admin');
@@ -26,8 +27,14 @@ class ProductsPage extends StatelessWidget {
       ),
       appBar: AppBar(
         title: Text('List'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.favorite),
+            onPressed: () {},
+          )
+        ],
       ),
-      body: ProductManager(products),
+      body: Products(products),
     );
   }
 }
