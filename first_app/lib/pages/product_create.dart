@@ -15,38 +15,51 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   String _titleValue = '';
   String _descriptionValue = '';
   double _priceValue;
+
+  Widget _buildTitleTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Name of Dragon'),
+      onChanged: (String value) {
+        setState(() {
+          _titleValue = value;
+        });
+      },
+    );
+  }
+
+  Widget _buildDescriptionTextField() {
+    return TextField(
+      maxLines: 4,
+      decoration: InputDecoration(labelText: 'Description of Dragon'),
+      onChanged: (String value) {
+        setState(() {
+          _descriptionValue = value;
+        });
+      },
+    );
+  }
+
+  Widget _buildPriceTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Price'),
+      keyboardType: TextInputType.number,
+      onChanged: (String value) {
+        setState(() {
+          _priceValue = double.parse(value);
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(10.0),
       child: ListView(
         children: <Widget>[
-          TextField(
-            decoration: InputDecoration(labelText: 'Name of Dragon'),
-            onChanged: (String value) {
-              setState(() {
-                _titleValue = value;
-              });
-            },
-          ),
-          TextField(
-            maxLines: 4,
-            decoration: InputDecoration(labelText: 'Description of Dragon'),
-            onChanged: (String value) {
-              setState(() {
-                _descriptionValue = value;
-              });
-            },
-          ),
-          TextField(
-            decoration: InputDecoration(labelText: 'Price'),
-            keyboardType: TextInputType.number,
-            onChanged: (String value) {
-              setState(() {
-                _priceValue = double.parse(value);
-              });
-            },
-          ),
+          _buildTitleTextField(),
+          _buildDescriptionTextField(),
+          _buildPriceTextField(),
           SizedBox(
             height: 10.0,
           ),

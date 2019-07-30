@@ -37,7 +37,7 @@ class ProductPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Union Square, San Francisco',
+                  'The Lair of Bluescale Dragons',
                   style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
                 ),
                 Container(

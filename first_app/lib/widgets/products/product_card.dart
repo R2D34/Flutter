@@ -1,3 +1,4 @@
+import 'package:first_app/widgets/products/address_tag.dart';
 import 'package:flutter/material.dart';
 
 import '../ui_elements/title_default.dart';
@@ -27,17 +28,7 @@ class ProductCard extends StatelessWidget {
             ),
             margin: EdgeInsets.only(top: 10.0),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey,
-                width: 1.0,
-              ),
-              borderRadius: BorderRadius.circular(6.0),
-            ),
-            child: Text('The Lair of Bluescale Dragons'),
-          ),
+          AddressTag('The Lair of Bluescaled Dragons'),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
