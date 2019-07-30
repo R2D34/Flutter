@@ -51,6 +51,17 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     );
   }
 
+  void _submitForm() {
+    final Map<String, dynamic> product = {
+      'title': _titleValue,
+      'description': _descriptionValue,
+      'price': _priceValue,
+      'image': 'assets/Pixel_Night_Town.gif'
+    };
+    widget.addProduct(product);
+    Navigator.pushReplacementNamed(context, '/products');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -66,16 +77,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
           RaisedButton(
             child: Text('Save'),
             color: Theme.of(context).accentColor,
-            onPressed: () {
-              final Map<String, dynamic> product = {
-                'title': _titleValue,
-                'description': _descriptionValue,
-                'price': _priceValue,
-                'image': 'assets/Pixel_Night_Town.gif'
-              };
-              widget.addProduct(product);
-              Navigator.pushReplacementNamed(context, '/products');
-            },
+            onPressed: _submitForm,
           )
         ],
       ),
