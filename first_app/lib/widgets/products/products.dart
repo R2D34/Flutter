@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './price_tag.dart';
+import './product_card.dart';
 
 class Products extends StatelessWidget {
   final List<Map<String, dynamic>> products;
@@ -8,70 +8,12 @@ class Products extends StatelessWidget {
     print('Products widget constructor');
   }
 
-  Widget _buildProductItem(BuildContext context, int index) {
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Image.asset(products[index]['image']),
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  products[index]['title'],
-                  style: TextStyle(
-                    fontSize: 26.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Oswald',
-                  ),
-                ),
-                SizedBox(width: 50.0),
-                PriceTag(products[index]['price'].toString()),
-              ],
-            ),
-            margin: EdgeInsets.only(top: 10.0),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey,
-                width: 1.0,
-              ),
-              borderRadius: BorderRadius.circular(6.0),
-            ),
-            child: Text('The Lair of Bluescale Dragons'),
-          ),
-          ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.info),
-                iconSize: 50.0,
-                color: Theme.of(context).primaryColor,
-                onPressed: () => Navigator.pushNamed<bool>(
-                    context, '/product/' + index.toString()),
-              ),
-              IconButton(
-                icon: Icon(Icons.favorite_border),
-                iconSize: 50.0,
-                color: Colors.red,
-                onPressed: () => Navigator.pushNamed<bool>(
-                    context, '/product/' + index.toString()),
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
   Widget _buildProductList() {
     print('Products build method');
     Widget productCard;
     if (products.length > 0) {
       productCard = ListView.builder(
-        itemBuilder: _buildProductItem,
+        itemBuilder: (BuildContext context, int index) => ProductCard(products[index], index),
         itemCount: products.length,
       );
     } else {
