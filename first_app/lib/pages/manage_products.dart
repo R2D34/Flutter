@@ -6,8 +6,8 @@ import 'package:first_app/pages/product_list.dart';
 class ManageProductsPage extends StatelessWidget {
   final Function addProduct;
   final Function deleteProduct;
-
-  ManageProductsPage(this.addProduct, this.deleteProduct);
+  final List<Map<String, dynamic>> products;
+  ManageProductsPage(this.addProduct, this.deleteProduct, this.products);
 
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
@@ -17,6 +17,10 @@ class ManageProductsPage extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.shop),
             title: Text('Home'),
+            trailing: IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {},
+            ),
             onTap: () {
               Navigator.pushReplacementNamed(context, '/products');
             },
@@ -44,7 +48,7 @@ class ManageProductsPage extends StatelessWidget {
         body: TabBarView(
           children: <Widget>[
             ProductCreatePage(addProduct),
-            ProductListPage(),
+            ProductListPage(products),
           ],
         ),
       ),
