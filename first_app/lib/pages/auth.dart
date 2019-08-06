@@ -8,8 +8,12 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  String _emailValue;
-  String _passwordValue;
+  final Map<String, dynamic> _dataForm = {
+    'emailValue': null,
+    'passwordValue': null
+  };
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   bool _acceptTerms = false;
 
   DecorationImage _buildBackgroundImage() {
@@ -21,34 +25,40 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  TextField _buildEmailTextField() {
-    return TextField(
+  Widget _buildEmailTextField() {
+    return TextFormField(
       decoration: InputDecoration(
         labelText: 'E-Mail',
         filled: true,
         fillColor: Colors.white,
       ),
       keyboardType: TextInputType.emailAddress,
-      onChanged: (String value) {
-        setState(() {
-          _emailValue = value;
-        });
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Emails is required.';
+        }
+      },
+      onSaved: (String value) {
+        _dataForm['emailValue'] = value;
       },
     );
   }
 
-  TextField _buildPasswordTextField() {
-    return TextField(
+  Widget _buildPasswordTextField() {
+    return TextFormField(
       decoration: InputDecoration(
         labelText: 'Password',
         filled: true,
         fillColor: Colors.white,
       ),
       obscureText: true,
-      onChanged: (String value) {
-        setState(() {
-          _passwordValue = value;
-        });
+      onSaved: (String value) {
+          _dataForm['passwordValue'] = value;
+      },
+      validator: (String value){
+        if(value.isEmpty){
+          return 'Password is required.';
+        }
       },
     );
   }
@@ -66,15 +76,18 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _submitForm() {
-    print(_emailValue);
-    print(_passwordValue);
-    Navigator.pushReplacementNamed(context, '/products');
+    print(_dataForm);
+    if (!_formKey.currentState.validate()) {
+      return;
+    } else {
+      Navigator.pushReplacementNamed(context, '/products');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-final double deviceWidth = MediaQuery.of(context).size.width;
-final double targetWidth = deviceWidth > 550.0 ? 500 : deviceWidth * 0.95;
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 550.0 ? 500 : deviceWidth * 0.95;
 
     return Scaffold(
       appBar: AppBar(
@@ -87,24 +100,27 @@ final double targetWidth = deviceWidth > 550.0 ? 500 : deviceWidth * 0.95;
         padding: EdgeInsets.all(10.0),
         child: Center(
           child: SingleChildScrollView(
-            child: Container(
-              width: targetWidth,
-              child: Column(
-                children: <Widget>[
-                  _buildEmailTextField(),
-                  SizedBox(height: 10.0),
-                  _buildPasswordTextField(),
-                  _buildAcceptSwitch(),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  RaisedButton(
-                    color: Theme.of(context).primaryColor,
-                    textColor: Colors.white,
-                    child: Text('LOGIN'),
-                    onPressed: _submitForm,
-                  ),
-                ],
+            child: Form(
+              key: _formKey,
+              child: Container(
+                width: targetWidth,
+                child: Column(
+                  children: <Widget>[
+                    _buildEmailTextField(),
+                    SizedBox(height: 10.0),
+                    _buildPasswordTextField(),
+                    _buildAcceptSwitch(),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    RaisedButton(
+                      color: Theme.of(context).primaryColor,
+                      textColor: Colors.white,
+                      child: Text('LOGIN'),
+                      onPressed: _submitForm,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
