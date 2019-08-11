@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import '../models/product.dart';
 
 class ProductEditPage extends StatefulWidget {
   final Function addProduct;
   final int productIndex;
   final Function updateProduct;
-  final Map<String, dynamic> product;
+  final Product product;
 
   ProductEditPage(
       {this.addProduct, this.updateProduct, this.product, this.productIndex});
@@ -27,7 +28,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget _buildTitleTextField() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Name of Dragon'),
-      initialValue: widget.product == null ? '' : widget.product['title'],
+      initialValue: widget.product == null ? '' : widget.product.title,
       validator: (String value) {
         if (value.isEmpty || value.length < 5) {
           return 'Title is required and should be 5+ characters long.';
@@ -42,7 +43,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget _buildDescriptionTextField() {
     return TextFormField(
       maxLines: 4,
-      initialValue: widget.product == null ? '' : widget.product['description'],
+      initialValue: widget.product == null ? '' : widget.product.description,
       validator: (String value) {
         if (value.isEmpty || value.length < 10) {
           return 'Description is required and should be 10+ characters long.';
@@ -59,7 +60,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Price'),
       initialValue:
-          widget.product == null ? '' : widget.product['price'].toString(),
+          widget.product == null ? '' : widget.product.price.toString(),
       validator: (String value) {
         if (value.isEmpty ||
             !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
@@ -79,16 +80,23 @@ class _ProductEditPageState extends State<ProductEditPage> {
     }
     _formKey.currentState.save();
     if (widget.product == null) {
-      widget.addProduct(_formData);
+      widget.addProduct(Product(
+          title: _formData['title'],
+          description: _formData['description'],
+          price: _formData['price'],
+          image: _formData['image']));
     } else {
-      widget.updateProduct(widget.productIndex, _formData);
+      widget.updateProduct(widget.productIndex, Product(
+          title: _formData['title'],
+          description: _formData['description'],
+          price: _formData['price'],
+          image: _formData['image']));
     }
     Navigator.pushReplacementNamed(context, '/products');
   }
 
   @override
   Widget build(BuildContext context) {
- 
     final Widget pageContent = _buildGestureDetector(context);
     return widget.product == null
         ? pageContent
@@ -105,31 +113,31 @@ class _ProductEditPageState extends State<ProductEditPage> {
     final double targetPadding = deviceWidth - targetWidth;
 
     return GestureDetector(
-    onTap: () {
-      FocusScope.of(context).requestFocus(FocusNode());
-    },
-    child: Container(
-      margin: EdgeInsets.all(10.0),
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
-          children: <Widget>[
-            _buildTitleTextField(),
-            _buildDescriptionTextField(),
-            _buildPriceTextField(),
-            SizedBox(
-              height: 10.0,
-            ),
-            RaisedButton(
-              child: Text('Save'),
-              color: Theme.of(context).accentColor,
-              onPressed: _submitForm,
-            )
-          ],
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Container(
+        margin: EdgeInsets.all(10.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
+            children: <Widget>[
+              _buildTitleTextField(),
+              _buildDescriptionTextField(),
+              _buildPriceTextField(),
+              SizedBox(
+                height: 10.0,
+              ),
+              RaisedButton(
+                child: Text('Save'),
+                color: Theme.of(context).accentColor,
+                onPressed: _submitForm,
+              )
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
   }
 }
