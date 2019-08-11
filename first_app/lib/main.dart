@@ -17,26 +17,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Product> _products = [];
-
-  void _addProduct(Product product) {
-    setState(() {
-      _products.add(product);
-    });
-  }
-
-  void _deleteProduct(int index) {
-    setState(() {
-      _products.removeAt(index);
-    });
-  }
-
-  void _updateProduct(int index, Product product){
-    setState(() {
-     _products[index] = product; 
-    });
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     print('MyApp build()');
