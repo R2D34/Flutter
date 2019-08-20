@@ -6,8 +6,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import 'pages/manage_products.dart';
 import 'pages/product.dart';
-import 'models/product.dart';
-import './scoped-models/products.dart';
+import './scoped-models/main.dart';
 
 void main() => runApp(MyApp());
 
@@ -23,8 +22,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     print('MyApp build()');
-    return ScopedModel<ProductsModel>(
-      model: ProductsModel(),
+    return ScopedModel<MainModel>(
+      model: MainModel(),
       child: MaterialApp(
         theme: ThemeData(
             primarySwatch: Colors.deepPurple, accentColor: Colors.deepOrange),

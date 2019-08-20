@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:first_app/pages/product_edit.dart';
 import 'package:first_app/pages/product_list.dart';
-import '../models/product.dart';
 
 class ManageProductsPage extends StatelessWidget {
 

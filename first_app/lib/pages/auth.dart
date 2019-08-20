@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:scoped_model/scoped_model.dart';
+
+import '../scoped-models/main.dart';
+
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -53,10 +57,10 @@ class _AuthPageState extends State<AuthPage> {
       ),
       obscureText: true,
       onSaved: (String value) {
-          _dataForm['passwordValue'] = value;
+        _dataForm['passwordValue'] = value;
       },
-      validator: (String value){
-        if(value.isEmpty){
+      validator: (String value) {
+        if (value.isEmpty) {
           return 'Password is required.';
         }
       },
@@ -75,11 +79,14 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm() {
-    print(_dataForm);
+  void _submitForm(Function login) {
     if (!_formKey.currentState.validate()) {
       return;
     } else {
+      _formKey.currentState.save();
+      print(_dataForm);
+
+      login(_dataForm['emailValue'], _dataForm['passwordValue']);
       Navigator.pushReplacementNamed(context, '/products');
     }
   }
@@ -113,12 +120,15 @@ class _AuthPageState extends State<AuthPage> {
                     SizedBox(
                       height: 10.0,
                     ),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text('LOGIN'),
-                      onPressed: _submitForm,
-                    ),
+                    ScopedModelDescendant<MainModel>(builder:
+                        (BuildContext context, Widget child, MainModel model) {
+                      return RaisedButton(
+                        color: Theme.of(context).primaryColor,
+                        textColor: Colors.white,
+                        child: Text('LOGIN'),
+                        onPressed: () => _submitForm(model.login),
+                      );
+                    })
                   ],
                 ),
               ),
