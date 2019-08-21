@@ -67,7 +67,7 @@ class ProductPage extends StatelessWidget {
                     product.description,
                     textAlign: TextAlign.center,
                   ),
-                )
+                ),
               ],
             ),
           );

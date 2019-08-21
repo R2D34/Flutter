@@ -25,7 +25,6 @@ class ProductsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       drawer: _buildSideDrawer(context),
       appBar: AppBar(

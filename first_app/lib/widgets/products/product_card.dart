@@ -57,13 +57,13 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Card(
       child: Column(
         children: <Widget>[
           Image.asset(product.image),
           _buildTitlePriceRow(),
           AddressTag('The Lair of Bluescaled Dragons'),
+          Text(product.userEmail),
           _buildActionButtons(context),
         ],
       ),
