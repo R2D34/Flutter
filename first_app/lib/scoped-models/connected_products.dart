@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:http/http.dart' as http;
@@ -12,7 +14,17 @@ mixin ConnectedProductsModel on Model {
 
   void addProduct(
       String title, String description, String image, double price) {
-        
+    final Map<String, dynamic> productData = {
+      'title': title,
+      'description': description,
+      'image':
+          'https://ksr-ugc.imgix.net/assets/022/580/629/0a06c5d1ae7b18f4337864e688b1912e_original.jpg?ixlib=rb-2.1.0&w=680&fit=max&v=1537197161&auto=format&gif-q=50&q=92&s=89ddf8f2a849762fa63dede8a7fcac3b',
+      'price': price
+    };
+
+    http.post('https://dojo-1.firebaseio.com/products.json',
+        body: json.encode(productData));
+
     final Product newProduct = Product(
         title: title,
         description: description,
@@ -33,12 +45,12 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   List<Product> get displayedProducts {
-    if(_showFavorites == true){
-      return List.from(_products.where((Product product) => product.isFavorite).toList());
+    if (_showFavorites == true) {
+      return List.from(
+          _products.where((Product product) => product.isFavorite).toList());
     }
-    
-    return List.from(_products);
 
+    return List.from(_products);
   }
 
   int get selectedProductIndex {
@@ -56,13 +68,13 @@ mixin ProductsModel on ConnectedProductsModel {
     return _showFavorites;
   }
 
-
   void deleteProduct() {
     _products.removeAt(selectedProductIndex);
     notifyListeners();
   }
 
-  void updateProduct(String title, String  description, String image, double price) {
+  void updateProduct(
+      String title, String description, String image, double price) {
     final Product updatedProduct = Product(
         title: title,
         description: description,
@@ -70,7 +82,7 @@ mixin ProductsModel on ConnectedProductsModel {
         price: price,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId);
-    
+
     _products[selectedProductIndex] = updatedProduct;
     notifyListeners();
   }
@@ -102,7 +114,6 @@ mixin ProductsModel on ConnectedProductsModel {
 }
 
 mixin UserModel on ConnectedProductsModel {
-
   void login(String email, String password) {
     _authenticatedUser = User(id: 'faasksak', email: email, password: password);
   }
