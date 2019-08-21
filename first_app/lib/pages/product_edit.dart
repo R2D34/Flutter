@@ -55,8 +55,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget _buildPriceTextField(Product product) {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Price'),
-      initialValue:
-          product == null ? '' : product.price.toString(),
+      initialValue: product == null ? '' : product.price.toString(),
       validator: (String value) {
         if (value.isEmpty ||
             !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
@@ -70,24 +69,26 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _submitForm(Function addProduct, Function updateProduct, [int selectedProductIndex]) {
+  void _submitForm(Function addProduct, Function updateProduct,
+      [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) {
       return;
     }
     _formKey.currentState.save();
     if (selectedProductIndex == null) {
-      addProduct(Product(
-          title: _formData['title'],
-          description: _formData['description'],
-          price: _formData['price'],
-          image: _formData['image']));
+      addProduct(
+        _formData['title'],
+        _formData['description'],
+        _formData['image'],
+        _formData['price'],
+      );
     } else {
       updateProduct(
-          Product(
-              title: _formData['title'],
-              description: _formData['description'],
-              price: _formData['price'],
-              image: _formData['image']));
+        _formData['title'],
+        _formData['description'],
+        _formData['image'],
+        _formData['price'],
+      );
     }
     Navigator.pushReplacementNamed(context, '/products');
   }
@@ -96,7 +97,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        final Widget pageContent = _buildGestureDetector(context, model.selectedProduct);
+        final Widget pageContent =
+            _buildGestureDetector(context, model.selectedProduct);
         return model.selectedProductIndex == null
             ? pageContent
             : Scaffold(
@@ -144,7 +146,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
         return RaisedButton(
           child: Text('Save'),
           color: Theme.of(context).accentColor,
-          onPressed: () => _submitForm(model.addProduct, model.updateProduct, model.selectedProductIndex),
+          onPressed: () => _submitForm(model.addProduct, model.updateProduct,
+              model.selectedProductIndex),
         );
       },
     );

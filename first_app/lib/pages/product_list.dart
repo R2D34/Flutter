@@ -13,7 +13,7 @@ class ProductListPage extends StatelessWidget {
         return ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               return Dismissible(
-                key: Key(model.products[index].title),
+                key: Key(model.allProducts[index].title),
                 onDismissed: (DismissDirection direction) {
                   if (direction == DismissDirection.endToStart) {
                     model.selectProduct(index);
@@ -26,11 +26,11 @@ class ProductListPage extends StatelessWidget {
                     ListTile(
                       leading: CircleAvatar(
                         backgroundImage:
-                            AssetImage(model.products[index].image),
+                            AssetImage(model.allProducts[index].image),
                       ),
-                      title: Text(model.products[index].title),
+                      title: Text(model.allProducts[index].title),
                       subtitle:
-                          Text('\$${model.products[index].price.toString()}'),
+                          Text('\$${model.allProducts[index].price.toString()}'),
                       trailing: _buildEditButton(context, index, model),
                     ),
                     Divider(),
@@ -38,7 +38,7 @@ class ProductListPage extends StatelessWidget {
                 ),
               );
             },
-            itemCount: model.products.length);
+            itemCount: model.allProducts.length);
       },
     );
   }
