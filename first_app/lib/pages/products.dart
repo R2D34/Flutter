@@ -18,11 +18,11 @@ class ProductsPage extends StatefulWidget {
 }
 
 class _ProductsPageState extends State<ProductsPage> {
- @override
- initState() {
-   widget.model.fetchProducts();
-   super.initState();
- }
+  @override
+  initState() {
+    widget.model.fetchProducts();
+    super.initState();
+  }
 
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
@@ -38,6 +38,22 @@ class _ProductsPageState extends State<ProductsPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProductsList() {
+    return ScopedModelDescendant(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        //Three cases of body. One where there are no products. One when there are products and they are loaded
+        //and one more when there are products but they are loading from the server.
+        Widget content = Center(child: Text('No dragons Found!'));
+        if (model.displayedProducts.length > 0 && !model.isLoading) {
+          content = Products();
+        } else if (model.isLoading) {
+          content = CircularProgressIndicator();
+        }
+        return content;
+      },
     );
   }
 
@@ -62,7 +78,7 @@ class _ProductsPageState extends State<ProductsPage> {
           )
         ],
       ),
-      body: Products(),
+      body: _buildProductsList(),
     );
   }
 }

@@ -11,9 +11,11 @@ mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
   User _authenticatedUser;
   int _selProductIndex;
+  bool _isLoading = false;
 
   void addProduct(
       String title, String description, String image, double price) {
+    _isLoading = true;
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -38,6 +40,7 @@ mixin ConnectedProductsModel on Model {
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
       _products.add(newProduct);
+      _isLoading = false;
       notifyListeners();
     });
   }
@@ -80,14 +83,13 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   void fetchProducts() {
+    _isLoading = true;
     http
         .get('https://dojo-1.firebaseio.com/products.json')
         .then((http.Response response) {
       final List<Product> fetchedProductList = [];
-      final Map<String, dynamic> productListData =
-          json.decode(response.body);
-      productListData
-          .forEach((String productId, dynamic productData) {
+      final Map<String, dynamic> productListData = json.decode(response.body);
+      productListData.forEach((String productId, dynamic productData) {
         final Product product = Product(
             id: productId,
             title: productData['title'],
@@ -99,6 +101,8 @@ mixin ProductsModel on ConnectedProductsModel {
         fetchedProductList.add(product);
       });
       _products = fetchedProductList;
+      _isLoading = false;
+
       notifyListeners();
     });
   }
@@ -147,4 +151,10 @@ mixin UserModel on ConnectedProductsModel {
   void login(String email, String password) {
     _authenticatedUser = User(id: 'faasksak', email: email, password: password);
   }
+}
+
+mixin UtilityModel on ConnectedProductsModel{
+ bool get isLoading{
+   return _isLoading;
+ }
 }
