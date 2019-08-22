@@ -21,9 +21,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    final MainModel model = MainModel();
     print('MyApp build()');
     return ScopedModel<MainModel>(
-      model: MainModel(),
+      model: model,
       child: MaterialApp(
         theme: ThemeData(
             primarySwatch: Colors.deepPurple, accentColor: Colors.deepOrange),
@@ -32,7 +33,7 @@ class _MyAppState extends State<MyApp> {
           // When using slash as name of home directory
           // We cannot use the home property of MaterialApp
           '/': (BuildContext context) => AuthPage(),
-          'products': (BuildContext context) => ProductsPage(),
+          'products': (BuildContext context) => ProductsPage(model),
           '/admin': (BuildContext context) => ManageProductsPage(),
         },
         onGenerateRoute: (RouteSettings settings) {
@@ -53,7 +54,7 @@ class _MyAppState extends State<MyApp> {
         //Adding default page to go if navigation fails
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(
-            builder: (BuildContext context) => ProductsPage(),
+            builder: (BuildContext context) => ProductsPage(model),
           );
         },
       ),

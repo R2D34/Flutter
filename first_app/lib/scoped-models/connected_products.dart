@@ -19,21 +19,27 @@ mixin ConnectedProductsModel on Model {
       'description': description,
       'image':
           'https://ksr-ugc.imgix.net/assets/022/580/629/0a06c5d1ae7b18f4337864e688b1912e_original.jpg?ixlib=rb-2.1.0&w=680&fit=max&v=1537197161&auto=format&gif-q=50&q=92&s=89ddf8f2a849762fa63dede8a7fcac3b',
-      'price': price
+      'price': price,
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id
     };
 
-    http.post('https://dojo-1.firebaseio.com/products.json',
-        body: json.encode(productData));
-
-    final Product newProduct = Product(
-        title: title,
-        description: description,
-        image: image,
-        price: price,
-        userEmail: _authenticatedUser.email,
-        userId: _authenticatedUser.id);
-    _products.add(newProduct);
-    notifyListeners();
+    http
+        .post('https://dojo-1.firebaseio.com/products.json',
+            body: json.encode(productData))
+        .then((http.Response response) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      final Product newProduct = Product(
+          id: responseData['name'],
+          title: title,
+          description: description,
+          image: image,
+          price: price,
+          userEmail: _authenticatedUser.email,
+          userId: _authenticatedUser.id);
+      _products.add(newProduct);
+      notifyListeners();
+    });
   }
 }
 
@@ -71,6 +77,30 @@ mixin ProductsModel on ConnectedProductsModel {
   void deleteProduct() {
     _products.removeAt(selectedProductIndex);
     notifyListeners();
+  }
+
+  void fetchProducts() {
+    http
+        .get('https://dojo-1.firebaseio.com/products.json')
+        .then((http.Response response) {
+      final List<Product> fetchedProductList = [];
+      final Map<String, dynamic> productListData =
+          json.decode(response.body);
+      productListData
+          .forEach((String productId, dynamic productData) {
+        final Product product = Product(
+            id: productId,
+            title: productData['title'],
+            description: productData['description'],
+            image: productData['image'],
+            price: productData['price'],
+            userEmail: productData['userEmail'],
+            userId: productData['userId']);
+        fetchedProductList.add(product);
+      });
+      _products = fetchedProductList;
+      notifyListeners();
+    });
   }
 
   void updateProduct(
