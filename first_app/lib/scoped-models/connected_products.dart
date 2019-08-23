@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:scoped_model/scoped_model.dart';
 
@@ -13,9 +14,10 @@ mixin ConnectedProductsModel on Model {
   int _selProductIndex;
   bool _isLoading = false;
 
-  void addProduct(
+  Future<Null> addProduct(
       String title, String description, String image, double price) {
     _isLoading = true;
+    notifyListeners();
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -26,7 +28,7 @@ mixin ConnectedProductsModel on Model {
       'userId': _authenticatedUser.id
     };
 
-    http
+    return http
         .post('https://dojo-1.firebaseio.com/products.json',
             body: json.encode(productData))
         .then((http.Response response) {
@@ -84,11 +86,17 @@ mixin ProductsModel on ConnectedProductsModel {
 
   void fetchProducts() {
     _isLoading = true;
+    notifyListeners();
     http
         .get('https://dojo-1.firebaseio.com/products.json')
         .then((http.Response response) {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
+      if (productListData == null){
+          _isLoading = false;
+          notifyListeners();
+          return;
+        }
       productListData.forEach((String productId, dynamic productData) {
         final Product product = Product(
             id: productId,
