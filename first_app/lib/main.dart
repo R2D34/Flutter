@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
           // We cannot use the home property of MaterialApp
           '/': (BuildContext context) => AuthPage(),
           'products': (BuildContext context) => ProductsPage(model),
-          '/admin': (BuildContext context) => ManageProductsPage(),
+          '/admin': (BuildContext context) => ManageProductsPage(model),
         },
         onGenerateRoute: (RouteSettings settings) {
           final List<String> pathElements = settings.name.split('/');
