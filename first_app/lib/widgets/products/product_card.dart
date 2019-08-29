@@ -28,31 +28,35 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  _buildActionButtons(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          icon: Icon(Icons.info),
-          iconSize: 50.0,
-          color: Theme.of(context).primaryColor,
-          onPressed: () => Navigator.pushNamed<bool>(
-              context, '/product/' + productIndex.toString()),
-        ),
-        ScopedModelDescendant<MainModel>(
-            builder: (BuildContext context, Widget child, MainModel model) {
-          return IconButton(
-            icon: Icon(model.allProducts[productIndex].isFavorite ? Icons.favorite : Icons.favorite_border),
+  Widget _buildActionButtons(BuildContext context) {
+    return ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
+      return ButtonBar(
+        alignment: MainAxisAlignment.center,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.info),
+            iconSize: 50.0,
+            color: Theme.of(context).primaryColor,
+            onPressed: () => Navigator.pushNamed<bool>(
+              context,
+              '/product/' + model.allProducts[productIndex].id,
+            ),
+          ),
+          IconButton(
+            icon: Icon(model.allProducts[productIndex].isFavorite
+                ? Icons.favorite
+                : Icons.favorite_border),
             iconSize: 50.0,
             color: Colors.red,
             onPressed: () {
-              model.selectProduct(productIndex);
+              model.selectProduct(model.allProducts[productIndex].id);
               model.toggleProductFavoriteStatus();
             },
-          );
-        })
-      ],
-    );
+          ),
+        ],
+      );
+    });
   }
 
   @override
@@ -60,7 +64,12 @@ class ProductCard extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.network(product.image),
+          FadeInImage(
+            image: NetworkImage(product.image),
+            placeholder: AssetImage('assets/background1.jpg'),
+            height: 300.0,
+            fit: BoxFit.cover,
+          ),
           _buildTitlePriceRow(),
           AddressTag('The Lair of Bluescaled Dragons'),
           Text(product.userEmail),
