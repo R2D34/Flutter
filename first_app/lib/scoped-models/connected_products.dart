@@ -48,6 +48,11 @@ mixin ConnectedProductsModel on Model {
       _isLoading = false;
       notifyListeners();
       return true;
+    }).catchError((error){
+      _isLoading = false;
+      notifyListeners();
+      return false;
+      
     });
   }
 }
@@ -103,7 +108,12 @@ mixin ProductsModel on ConnectedProductsModel {
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
-    });
+    }).catchError((error){
+      _isLoading = false;
+      notifyListeners();
+      return false;
+      
+    });;
   }
 
   Future<Null> fetchProducts() {
@@ -138,7 +148,12 @@ mixin ProductsModel on ConnectedProductsModel {
 
       notifyListeners();
       _selProductId = null;
-    });
+    }).catchError((error){
+      _isLoading = false;
+      notifyListeners();
+      return false;
+      
+    });;
   }
 
   Future<Null> updateProduct(
@@ -171,7 +186,12 @@ mixin ProductsModel on ConnectedProductsModel {
           userId: selectedProduct.userId);
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
-    });
+    }).catchError((error){
+      _isLoading = false;
+      notifyListeners();
+      return false;
+      
+    });;
   }
 
   void toggleProductFavoriteStatus() {
