@@ -14,7 +14,7 @@ mixin ConnectedProductsModel on Model {
   String _selProductId;
   bool _isLoading = false;
 
-  Future<Null> addProduct(
+  Future<bool> addProduct(
       String title, String description, String image, double price) {
     _isLoading = true;
     notifyListeners();
@@ -32,6 +32,9 @@ mixin ConnectedProductsModel on Model {
         .post('https://dojo-1.firebaseio.com/products.json',
             body: json.encode(productData))
         .then((http.Response response) {
+          if(response.statusCode != 200 && response.statusCode != 201){
+            return false;
+          }
       final Map<String, dynamic> responseData = json.decode(response.body);
       final Product newProduct = Product(
           id: responseData['name'],
@@ -44,6 +47,7 @@ mixin ConnectedProductsModel on Model {
       _products.add(newProduct);
       _isLoading = false;
       notifyListeners();
+      return true;
     });
   }
 }
@@ -103,6 +107,7 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   Future<Null> fetchProducts() {
+        print('Loading Products');
     _isLoading = true;
     notifyListeners();
     return http
@@ -110,6 +115,7 @@ mixin ProductsModel on ConnectedProductsModel {
         .then((http.Response response) {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
+      print('Fetchd products');
       if (productListData == null) {
         _isLoading = false;
         notifyListeners();
@@ -128,6 +134,7 @@ mixin ProductsModel on ConnectedProductsModel {
       });
       _products = fetchedProductList;
       _isLoading = false;
+      print('Finished loading products');
 
       notifyListeners();
       _selProductId = null;
