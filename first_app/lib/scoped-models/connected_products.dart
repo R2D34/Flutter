@@ -15,7 +15,7 @@ mixin ConnectedProductsModel on Model {
   bool _isLoading = false;
 
   Future<bool> addProduct(
-      String title, String description, String image, double price) {
+      String title, String description, String image, double price) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productData = {
@@ -28,13 +28,14 @@ mixin ConnectedProductsModel on Model {
       'userId': _authenticatedUser.id
     };
 
-    return http
-        .post('https://dojo-1.firebaseio.com/products.json',
-            body: json.encode(productData))
-        .then((http.Response response) {
-          if(response.statusCode != 200 && response.statusCode != 201){
-            return false;
-          }
+    try {
+      final http.Response response = await http.post(
+          'https://dojo-1.firebaseio.com/products.json',
+          body: json.encode(productData));
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        return false;
+      }
       final Map<String, dynamic> responseData = json.decode(response.body);
       final Product newProduct = Product(
           id: responseData['name'],
@@ -48,12 +49,14 @@ mixin ConnectedProductsModel on Model {
       _isLoading = false;
       notifyListeners();
       return true;
-    }).catchError((error){
+    } catch (error) {
       _isLoading = false;
       notifyListeners();
       return false;
-      
-    });
+    }
+    // .catchError((error){
+
+    // });
   }
 }
 
@@ -96,33 +99,33 @@ mixin ProductsModel on ConnectedProductsModel {
     return _showFavorites;
   }
 
-  void deleteProduct() {
+  Future<bool> deleteProduct() {
     _isLoading = true;
     final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
     _selProductId = null;
     notifyListeners();
-    http
+    return http
         .delete(
             'https://dojo-1.firebaseio.com/products/${deletedProductId}.json')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
-    }).catchError((error){
+      return true;
+    }).catchError((error) {
       _isLoading = false;
       notifyListeners();
       return false;
-      
-    });;
+    });
   }
 
   Future<Null> fetchProducts() {
-        print('Loading Products');
+    print('Loading Products');
     _isLoading = true;
     notifyListeners();
     return http
         .get('https://dojo-1.firebaseio.com/products.json')
-        .then((http.Response response) {
+        .then<Null>((http.Response response) {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
       print('Fetchd products');
@@ -148,15 +151,15 @@ mixin ProductsModel on ConnectedProductsModel {
 
       notifyListeners();
       _selProductId = null;
-    }).catchError((error){
+    }).catchError((error) {
       _isLoading = false;
       notifyListeners();
       return false;
-      
-    });;
+    });
+    ;
   }
 
-  Future<Null> updateProduct(
+  Future<bool> updateProduct(
       String title, String description, String image, double price) {
     _isLoading = true;
     notifyListeners();
@@ -186,12 +189,13 @@ mixin ProductsModel on ConnectedProductsModel {
           userId: selectedProduct.userId);
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
-    }).catchError((error){
+      return true;
+    }).catchError((error) {
       _isLoading = false;
       notifyListeners();
       return false;
-      
-    });;
+    });
+    ;
   }
 
   void toggleProductFavoriteStatus() {
