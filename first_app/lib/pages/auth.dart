@@ -138,6 +138,7 @@ class _AuthPageState extends State<AuthPage> {
                 width: targetWidth,
                 child: Column(
                   children: <Widget>[
+
                     _buildEmailTextField(),
                     SizedBox(height: 10.0),
                     _buildPasswordTextField(),
