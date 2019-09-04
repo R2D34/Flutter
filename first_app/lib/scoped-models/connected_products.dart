@@ -229,12 +229,6 @@ mixin UserModel on ConnectedProductsModel {
   void login(String email, String password) {
     _authenticatedUser = User(id: 'faasksak', email: email, password: password);
   }
-}
-
-mixin UtilityModel on ConnectedProductsModel {
-  bool get isLoading {
-    return _isLoading;
-  }
 
   Future<Map<String, dynamic>> signup(String email, String password) async {
     final Map<String, dynamic> authData = {
@@ -243,11 +237,19 @@ mixin UtilityModel on ConnectedProductsModel {
       'returnSecureToken': true
     };
     final http.Response response = await http.post(
-      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=AIzaSyCodUCc1m_c-dcfnaFwjO5t_rFj6gmu3Yw',
+      'https://identitytoolkit.googleapis.com/https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCodUCc1m_c-dcfnaFwjO5t_rFj6gmu3Yw',
       body: json.encode(authData),
       headers: {'Content-Type': 'application/json'}
     );
-    print(response);
+    // print(json.decode(response.body));
     return {'success': true, 'message': 'Authentication succeded!'};
   }
+}
+
+mixin UtilityModel on ConnectedProductsModel {
+  bool get isLoading {
+    return _isLoading;
+  }
+
+  
 }
