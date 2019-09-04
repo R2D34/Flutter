@@ -13,7 +13,6 @@ mixin ConnectedProductsModel on Model {
   User _authenticatedUser;
   String _selProductId;
   bool _isLoading = false;
-
 }
 
 mixin ProductsModel on ConnectedProductsModel {
@@ -235,5 +234,20 @@ mixin UserModel on ConnectedProductsModel {
 mixin UtilityModel on ConnectedProductsModel {
   bool get isLoading {
     return _isLoading;
+  }
+
+  Future<Map<String, dynamic>> signup(String email, String password) async {
+    final Map<String, dynamic> authData = {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true
+    };
+    final http.Response response = await http.post(
+      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=AIzaSyCodUCc1m_c-dcfnaFwjO5t_rFj6gmu3Yw',
+      body: json.encode(authData),
+      headers: {'Content-Type': 'application/json'}
+    );
+    print(response);
+    return {'success': true, 'message': 'Authentication succeded!'};
   }
 }

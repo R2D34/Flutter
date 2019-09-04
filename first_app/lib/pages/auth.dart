@@ -66,9 +66,6 @@ class _AuthPageState extends State<AuthPage> {
           return 'Password do not match';
         }
       },
-      onSaved: (String value) {
-        _dataForm['emailValue'] = value;
-      },
     );
   }
 
@@ -104,15 +101,21 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm(Function login) {
+  void _submitForm(Function login, Function signup) async {
     if (!_formKey.currentState.validate()) {
       return;
     } else {
       _formKey.currentState.save();
       print(_dataForm);
-
-      login(_dataForm['emailValue'], _dataForm['passwordValue']);
-      Navigator.pushReplacementNamed(context, '/products');
+      if (_authMode == AuthMode.Login) {
+        login(_dataForm['emailValue'], _dataForm['passwordValue']);
+      } else {
+        final Map<String, dynamic> successInformation =
+            await signup(_dataForm['emailValue'], _dataForm['passwordValue']);
+        if (successInformation['success'] == true) {
+          Navigator.pushReplacementNamed(context, '/products');
+        }
+      }
     }
   }
 
@@ -138,12 +141,13 @@ class _AuthPageState extends State<AuthPage> {
                 width: targetWidth,
                 child: Column(
                   children: <Widget>[
-
                     _buildEmailTextField(),
                     SizedBox(height: 10.0),
                     _buildPasswordTextField(),
                     SizedBox(height: 10.0),
-                    _authMode == AuthMode.Signup ? _buildPasswordConfirmTextField() : Container(),
+                    _authMode == AuthMode.Signup
+                        ? _buildPasswordConfirmTextField()
+                        : Container(),
                     _buildAcceptSwitch(),
                     SizedBox(height: 10.0),
                     FlatButton(
@@ -164,7 +168,7 @@ class _AuthPageState extends State<AuthPage> {
                         color: Theme.of(context).primaryColor,
                         textColor: Colors.white,
                         child: Text('LOGIN'),
-                        onPressed: () => _submitForm(model.login),
+                        onPressed: () => _submitForm(model.login, model.signup),
                       );
                     })
                   ],
