@@ -236,12 +236,13 @@ mixin UserModel on ConnectedProductsModel {
       'returnSecureToken': true
     };
     final http.Response response = await http.post(
-      'https://identitytoolkit.googleapis.com/https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCodUCc1m_c-dcfnaFwjO5t_rFj6gmu3Yw',
+      'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCodUCc1m_c-dcfnaFwjO5t_rFj6gmu3Yw',
       body: json.encode(authData),
       headers: {'Content-Type': 'application/json'},
+      
     );
-
-    // print(json.decode(response.body));
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    print((responseData));
     return {'success': true, 'message': 'Authentication succeded!'};
   }
 }
@@ -250,6 +251,4 @@ mixin UtilityModel on ConnectedProductsModel {
   bool get isLoading {
     return _isLoading;
   }
-
-  
 }
