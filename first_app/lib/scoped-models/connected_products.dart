@@ -83,7 +83,7 @@ mixin ProductsModel on ConnectedProductsModel {
         .then<Null>((http.Response response) {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
-      print('Fetchd products');
+      print('Fetched products');
       if (productListData == null) {
         _isLoading = false;
         notifyListeners();
@@ -111,7 +111,6 @@ mixin ProductsModel on ConnectedProductsModel {
       notifyListeners();
       return false;
     });
-    ;
   }
 
   Future<bool> addProduct(
@@ -239,8 +238,9 @@ mixin UserModel on ConnectedProductsModel {
     final http.Response response = await http.post(
       'https://identitytoolkit.googleapis.com/https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCodUCc1m_c-dcfnaFwjO5t_rFj6gmu3Yw',
       body: json.encode(authData),
-      headers: {'Content-Type': 'application/json'}
+      headers: {'Content-Type': 'application/json'},
     );
+
     // print(json.decode(response.body));
     return {'success': true, 'message': 'Authentication succeded!'};
   }

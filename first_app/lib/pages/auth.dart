@@ -112,7 +112,7 @@ class _AuthPageState extends State<AuthPage> {
       } else {
         final Map<String, dynamic> successInformation =
             await signup(_dataForm['emailValue'], _dataForm['passwordValue']);
-        if (successInformation['success'] == true) {
+        if (successInformation['success']) {
           Navigator.pushReplacementNamed(context, '/products');
         }
       }
