@@ -114,6 +114,23 @@ class _AuthPageState extends State<AuthPage> {
             await signup(_dataForm['emailValue'], _dataForm['passwordValue']);
         if (successInformation['success']) {
           Navigator.pushReplacementNamed(context, '/products');
+        } else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('An error occured!'),
+                  content: Text(successInformation['message']),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Okay'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
         }
       }
     }

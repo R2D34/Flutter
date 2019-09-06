@@ -239,11 +239,20 @@ mixin UserModel on ConnectedProductsModel {
       'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCodUCc1m_c-dcfnaFwjO5t_rFj6gmu3Yw',
       body: json.encode(authData),
       headers: {'Content-Type': 'application/json'},
-      
     );
     final Map<String, dynamic> responseData = json.decode(response.body);
-    print((responseData));
-    return {'success': true, 'message': 'Authentication succeded!'};
+
+    bool hasError = true;
+    String message = 'Something went wrong';
+
+    if (responseData.containsKey('idToken')) {
+      hasError = false;
+    String message = 'Authentication Succeeded!';
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+      message = 'This email already exists.';
+    }
+
+    return {'success': !hasError, 'message': message};
   }
 }
 
