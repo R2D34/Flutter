@@ -25,7 +25,7 @@ class ManageProductsPage extends StatelessWidget {
               onPressed: () {},
             ),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/products');
+              Navigator.pushReplacementNamed(context, '/');
             },
           ),
                     Divider(),
