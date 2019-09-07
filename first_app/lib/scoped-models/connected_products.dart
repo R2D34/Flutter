@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferances/shared_preferences.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
@@ -182,7 +183,7 @@ mixin ProductsModel on ConnectedProductsModel {
       final Product updatedProduct = Product(
           id: selectedProduct.id,
           title: title,
-          description: description,
+          description: description, 
           image: image,
           price: price,
           userEmail: selectedProduct.userEmail,
