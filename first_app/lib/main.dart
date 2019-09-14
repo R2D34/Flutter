@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:first_app/pages/products.dart';
 import 'package:first_app/pages/auth.dart';
 import 'package:scoped_model/scoped_model.dart';
+//import 'package:map_view/map_view.dart';
 
 import 'pages/manage_products.dart';
 import 'pages/product.dart';
 import './scoped-models/main.dart';
 import './models/product.dart';
 
-void main() => runApp(MyApp());
-
+void main() {
+  //MapView.setApiKey('AIzaSyCzvJ5yU2S8y6Er96gpY5EIMx7HIGgUNHo');
+  runApp(MyApp());
+}
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
