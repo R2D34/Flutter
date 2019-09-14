@@ -78,8 +78,10 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   Future<Null> fetchProducts({onlyForUser = false}) {
+    
     print('Loading Products');
     _isLoading = true;
+    _products = [];
     notifyListeners();
     return http
         .get(
