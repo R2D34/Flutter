@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:first_app/pages/product_edit.dart';
-import 'package:first_app/pages/product_list.dart';
+import './product_edit.dart';
+import './product_list.dart';
 
 import '../scoped-models/main.dart';
+import '../ui_elements/logout_list_tile.dart';
 
 class ManageProductsPage extends StatelessWidget {
 
@@ -24,9 +25,11 @@ class ManageProductsPage extends StatelessWidget {
               onPressed: () {},
             ),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/products');
+              Navigator.pushReplacementNamed(context, '/');
             },
           ),
+                    Divider(),
+          LogoutListTile(),
         ],
       ),
     );

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped-models/main.dart';
+import '../models/auth.dart';
+
+
 
 class AuthPage extends StatefulWidget {
   @override
@@ -17,6 +20,9 @@ class _AuthPageState extends State<AuthPage> {
     'passwordValue': null
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _passwordTextController = TextEditingController();
+
+  AuthMode _authMode = AuthMode.Login;
 
   bool _acceptTerms = false;
 
@@ -48,6 +54,22 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
+  Widget _buildPasswordConfirmTextField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: 'Confirm Password',
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      obscureText: true,
+      validator: (String value) {
+        if (_passwordTextController.text != value) {
+          return 'Password do not match';
+        }
+      },
+    );
+  }
+
   Widget _buildPasswordTextField() {
     return TextFormField(
       decoration: InputDecoration(
@@ -55,6 +77,7 @@ class _AuthPageState extends State<AuthPage> {
         filled: true,
         fillColor: Colors.white,
       ),
+      controller: _passwordTextController,
       obscureText: true,
       onSaved: (String value) {
         _dataForm['passwordValue'] = value;
@@ -79,17 +102,36 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm(Function login) {
+  void _submitForm(Function authenticate) async {
     if (!_formKey.currentState.validate()) {
       return;
     } else {
       _formKey.currentState.save();
       print(_dataForm);
-
-      login(_dataForm['emailValue'], _dataForm['passwordValue']);
-      Navigator.pushReplacementNamed(context, '/products');
+      Map<String, dynamic> successInformation;
+        successInformation =
+            await authenticate(_dataForm['emailValue'], _dataForm['passwordValue'], _authMode);
+        if (!successInformation['success']) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('An error occured!'),
+                  content: Text(successInformation['message']),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Okay'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
+      }
     }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -116,18 +158,37 @@ class _AuthPageState extends State<AuthPage> {
                     _buildEmailTextField(),
                     SizedBox(height: 10.0),
                     _buildPasswordTextField(),
+                    SizedBox(height: 10.0),
+                    _authMode == AuthMode.Signup
+                        ? _buildPasswordConfirmTextField()
+                        : Container(),
                     _buildAcceptSwitch(),
-                    SizedBox(
-                      height: 10.0,
+                    SizedBox(height: 10.0),
+                    FlatButton(
+                      child: Text(
+                          'Switch to ${_authMode == AuthMode.Login ? 'Signup' : 'Login'}'),
+                      onPressed: () {
+                        setState(() {
+                          _authMode = _authMode == AuthMode.Login
+                              ? AuthMode.Signup
+                              : AuthMode.Login;
+                        });
+                      },
                     ),
+                    SizedBox(height: 10.0),
                     ScopedModelDescendant<MainModel>(builder:
                         (BuildContext context, Widget child, MainModel model) {
-                      return RaisedButton(
-                        color: Theme.of(context).primaryColor,
-                        textColor: Colors.white,
-                        child: Text('LOGIN'),
-                        onPressed: () => _submitForm(model.login),
-                      );
+                      return model.isLoading
+                          ? CircularProgressIndicator()
+                          : RaisedButton(
+                              color: Theme.of(context).primaryColor,
+                              textColor: Colors.white,
+                              child: Text(_authMode == AuthMode.Login
+                                  ? 'LOGIN'
+                                  : 'SIGN UP'),
+                              onPressed: () =>
+                                  _submitForm(model.authenticate),
+                            );
                     })
                   ],
                 ),

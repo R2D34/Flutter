@@ -3,29 +3,44 @@ import 'package:flutter/material.dart';
 import 'package:first_app/pages/products.dart';
 import 'package:first_app/pages/auth.dart';
 import 'package:scoped_model/scoped_model.dart';
+//import 'package:map_view/map_view.dart';
 
 import 'pages/manage_products.dart';
 import 'pages/product.dart';
 import './scoped-models/main.dart';
 import './models/product.dart';
 
-void main() => runApp(MyApp());
-
+void main() {
+  //MapView.setApiKey('AIzaSyCzvJ5yU2S8y6Er96gpY5EIMx7HIGgUNHo');
+  runApp(MyApp());
+}
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _MyAppState();
   }
 }
 
 class _MyAppState extends State<MyApp> {
+  final MainModel _model = MainModel();
+  bool _isAuthenticated = false;
+
+  @override
+  void initState() {
+    _model.autoAuthenticate();
+    _model.userSubject.listen((bool isAuthenticated) {
+      setState(() {
+        _isAuthenticated = isAuthenticated;
+      }); 
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final MainModel model = MainModel();
     print('MyApp build()');
     return ScopedModel<MainModel>(
-      model: model,
+      model: _model,
       child: MaterialApp(
         theme: ThemeData(
             primarySwatch: Colors.deepPurple, accentColor: Colors.deepOrange),
@@ -33,11 +48,16 @@ class _MyAppState extends State<MyApp> {
         routes: {
           // When using slash as name of home directory
           // We cannot use the home property of MaterialApp
-          '/': (BuildContext context) => AuthPage(),
-          'products': (BuildContext context) => ProductsPage(model),
-          '/admin': (BuildContext context) => ManageProductsPage(model),
+          '/': (BuildContext context) =>
+              !_isAuthenticated ? AuthPage() : ProductsPage(_model),
+          '/admin': (BuildContext context) => !_isAuthenticated ? AuthPage() : ManageProductsPage(_model),
         },
         onGenerateRoute: (RouteSettings settings) {
+          if (!_isAuthenticated){
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) => AuthPage(),
+            );
+          }
           final List<String> pathElements = settings.name.split('/');
 
           if (pathElements[0] != '') {
@@ -45,10 +65,12 @@ class _MyAppState extends State<MyApp> {
           }
           if (pathElements[1] == 'product') {
             final String productId = pathElements[2];
-            final Product product = model.allProducts.firstWhere((Product product) {return product.id == productId;});
+            final Product product =
+                _model.allProducts.firstWhere((Product product) {
+              return product.id == productId;
+            });
             return MaterialPageRoute<bool>(
-              builder: (BuildContext context) =>
-                  ProductPage(product),
+              builder: (BuildContext context) => !_isAuthenticated ? AuthPage() : ProductPage(product),
             );
           }
           return null;
@@ -56,7 +78,7 @@ class _MyAppState extends State<MyApp> {
         //Adding default page to go if navigation fails
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(
-            builder: (BuildContext context) => ProductsPage(model),
+            builder: (BuildContext context) => !_isAuthenticated ? AuthPage() : ProductsPage(_model),
           );
         },
       ),
