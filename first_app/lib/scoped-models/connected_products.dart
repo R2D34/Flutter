@@ -33,6 +33,8 @@ mixin ConnectedProductsModel on Model {
             body: json.encode(productData))
         .then((http.Response response) {
           if(response.statusCode != 200 && response.statusCode != 201){
+            _isLoading = false;
+            notifyListeners();
             return false;
           }
       final Map<String, dynamic> responseData = json.decode(response.body);
