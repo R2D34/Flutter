@@ -11,8 +11,13 @@ class ImageInput extends StatefulWidget {
 }
 
 class _ImageInputState extends State<ImageInput> {
+  File _imageFile;
+
   void _getImage(BuildContext context, ImageSource source) {
     ImagePicker.pickImage(source: source, maxWidth: 400.0).then((File image) {
+      setState(() {
+        _imageFile = image;
+      });
       Navigator.pop(context);
     });
   }
@@ -53,21 +58,33 @@ class _ImageInputState extends State<ImageInput> {
       children: <Widget>[
         OutlineButton(
           borderSide:
-              BorderSide(color: Theme.of(context).buttonColor, width: 2.0),
+              BorderSide(color: buttonColor, width: 2.0),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(Icons.camera_alt),
+                Icon(Icons.camera_alt, color: buttonColor,),
                 SizedBox(width: 5.0),
                 Text(
                   'Add Image',
-                  style: TextStyle(color: Theme.of(context).buttonColor),
+                  style: TextStyle(color: buttonColor),
                 )
               ]),
           onPressed: () {
             _openImagePicker(context);
           },
-        )
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        _imageFile == null
+            ? Text('Please pick an image.')
+            : Image.file(
+                _imageFile,
+                fit: BoxFit.cover,
+                height: 300.0,
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.topCenter,
+              )
       ],
     );
   }

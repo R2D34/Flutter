@@ -22,11 +22,30 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'image': 'assets/Pixel_Night_Town.gif'
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _titleTextController = TextEditingController();
+  final _descriptionTextController = TextEditingController();
 
   Widget _buildTitleTextField(Product product) {
+    if(product == null && _titleTextController.text.trim() == ''){
+      _titleTextController.text = '';
+    }
+    else if(product != null && _titleTextController.text.trim() == ''){
+      _titleTextController.text = product.title;
+    }
+    else if(product != null && _titleTextController.text.trim() != ''){
+      _titleTextController.text = _titleTextController.text;
+    }
+    else if(product == null && _titleTextController.text.trim() != ''){
+      _titleTextController.text = _titleTextController.text;
+    }
+    else {
+      _titleTextController.text = '';
+    }
+
     return TextFormField(
       decoration: InputDecoration(labelText: 'Name of Dragon'),
-      initialValue: product == null ? '' : product.title,
+      // initialValue: product == null ? '' : product.title,
+      controller: _titleTextController,
       validator: (String value) {
         if (value.isEmpty || value.length < 5) {
           return 'Title is required and should be 5+ characters long.';
@@ -39,9 +58,16 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildDescriptionTextField(Product product) {
+    if(product == null && _descriptionTextController.text.trim() == ''){
+      _descriptionTextController.text = '';
+    }
+    else if(product != null && _descriptionTextController.text.trim() == ''){
+      _descriptionTextController.text = product.description;
+    }
     return TextFormField(
       maxLines: 4,
-      initialValue: product == null ? '' : product.description,
+      // initialValue: product == null ? '' : product.description,
+      controller: _descriptionTextController,
       validator: (String value) {
         if (value.isEmpty || value.length < 10) {
           return 'Description is required and should be 10+ characters long.';
@@ -80,8 +106,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
     _formKey.currentState.save();
     if (selectedProductIndex == -1) {
       addProduct(
-        _formData['title'],
-        _formData['description'],
+        _titleTextController.text,
+        _descriptionTextController.text,
         _formData['image'],
         _formData['price'],
       ).then((bool success) {
@@ -108,8 +134,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
       });
     } else {
       updateProduct(
-        _formData['title'],
-        _formData['description'],
+        _titleTextController.text,
+        _descriptionTextController.text,
         _formData['image'],
         _formData['price'],
       ).then((_) => Navigator.pushReplacementNamed(context, '/')
