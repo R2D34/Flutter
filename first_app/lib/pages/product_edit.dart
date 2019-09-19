@@ -4,6 +4,7 @@ import '../models/product.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 
+import '../widgets/form_inputs/image.dart';
 import '../scoped-models/main.dart';
 
 class ProductEditPage extends StatefulWidget {
@@ -156,6 +157,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               SizedBox(
                 height: 10.0,
               ),
+              ImageInput(),
               SizedBox(
                 height: 10.0,
               ),
