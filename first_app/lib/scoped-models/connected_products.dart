@@ -78,7 +78,6 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   Future<Null> fetchProducts({onlyForUser = false}) {
-    
     print('Loading Products');
     _isLoading = true;
     _products = [];
@@ -110,9 +109,11 @@ mixin ProductsModel on ConnectedProductsModel {
                     .containsKey(_authenticatedUser.id));
         fetchedProductList.add(product);
       });
-      _products = onlyForUser ? fetchedProductList.where((Product product) {
-        return product.userId == _authenticatedUser.id;
-      }).toList() : fetchedProductList;
+      _products = onlyForUser
+          ? fetchedProductList.where((Product product) {
+              return product.userId == _authenticatedUser.id;
+            }).toList()
+          : fetchedProductList;
       _isLoading = false;
       print('Finished loading products');
 
@@ -251,7 +252,9 @@ mixin ProductsModel on ConnectedProductsModel {
 
   void selectProduct(String productId) {
     _selProductId = productId;
-    notifyListeners();
+    if (productId != null) {
+      notifyListeners();
+    }
   }
 
   void toggleDisplayMode() {
@@ -298,25 +301,27 @@ mixin UserModel on ConnectedProductsModel {
     }
 
     final Map<String, dynamic> responseData = json.decode(response.body);
-
+    print(responseData);
     bool hasError = true;
     String message = 'Something went wrong';
-    _authenticatedUser = User(
-        id: responseData['localId'],
-        email: email,
-        token: responseData['idToken']);
-    setAuthTimeout(int.parse(responseData['expiresIn']));
-    _userSubject.add(true);
 
-    final DateTime now = DateTime.now();
-    final DateTime expiryTime =
-        now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', responseData['idToken']);
-    prefs.setString('userEmail', email);
-    prefs.setString('userId', responseData['localId']);
-    prefs.setString('expiryTime', expiryTime.toIso8601String());
     if (responseData.containsKey('idToken')) {
+      _authenticatedUser = User(
+          id: responseData['localId'],
+          email: email,
+          token: responseData['idToken']);
+
+      setAuthTimeout(int.parse(responseData['expiresIn']));
+      _userSubject.add(true);
+
+      final DateTime now = DateTime.now();
+      final DateTime expiryTime =
+          now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', responseData['idToken']);
+      prefs.setString('userEmail', email);
+      prefs.setString('userId', responseData['localId']);
+      prefs.setString('expiryTime', expiryTime.toIso8601String());
       hasError = false;
       message = 'Authentication Succeeded!';
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
