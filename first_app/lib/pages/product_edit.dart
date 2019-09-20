@@ -1,8 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 
 import 'package:scoped_model/scoped_model.dart';
-
 
 import '../widgets/form_inputs/image.dart';
 import '../scoped-models/main.dart';
@@ -19,26 +20,22 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/Pixel_Night_Town.gif'
+    'image': null
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _titleTextController = TextEditingController();
   final _descriptionTextController = TextEditingController();
 
   Widget _buildTitleTextField(Product product) {
-    if(product == null && _titleTextController.text.trim() == ''){
+    if (product == null && _titleTextController.text.trim() == '') {
       _titleTextController.text = '';
-    }
-    else if(product != null && _titleTextController.text.trim() == ''){
+    } else if (product != null && _titleTextController.text.trim() == '') {
       _titleTextController.text = product.title;
-    }
-    else if(product != null && _titleTextController.text.trim() != ''){
+    } else if (product != null && _titleTextController.text.trim() != '') {
       _titleTextController.text = _titleTextController.text;
-    }
-    else if(product == null && _titleTextController.text.trim() != ''){
+    } else if (product == null && _titleTextController.text.trim() != '') {
       _titleTextController.text = _titleTextController.text;
-    }
-    else {
+    } else {
       _titleTextController.text = '';
     }
 
@@ -58,10 +55,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildDescriptionTextField(Product product) {
-    if(product == null && _descriptionTextController.text.trim() == ''){
+    if (product == null && _descriptionTextController.text.trim() == '') {
       _descriptionTextController.text = '';
-    }
-    else if(product != null && _descriptionTextController.text.trim() == ''){
+    } else if (product != null &&
+        _descriptionTextController.text.trim() == '') {
       _descriptionTextController.text = product.description;
     }
     return TextFormField(
@@ -97,10 +94,14 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
+  void _setImage(File image) {
+    _formData['image'] = image;
+  }
+
   void _submitForm(
       Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState.validate() || (_formData['image'] == null && selectedProductIndex == -1)) {
       return;
     }
     _formKey.currentState.save();
@@ -183,7 +184,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               SizedBox(
                 height: 10.0,
               ),
-              ImageInput(),
+              ImageInput(_setImage, product),
               SizedBox(
                 height: 10.0,
               ),
