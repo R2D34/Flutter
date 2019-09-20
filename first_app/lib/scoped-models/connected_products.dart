@@ -140,16 +140,40 @@ mixin ProductsModel on ConnectedProductsModel {
       contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
     );
     imageUploadRequest.files.add(file);
-    if(imagePath != null) {
+    if (imagePath != null) {
       imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
     }
+    imageUploadRequest.headers['Authorization'] =
+        'Bearer ${_authenticatedUser.token}';
 
+    try {
+      final streamedResponse = await imageUploadRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        print('Something went wrong');
+        print(json.decode(response.body));
+        return null;
+      }
+
+      final responseData = json.decode(response.body);
+      return responseData;
+    } catch (error) {
+      print(error);
+      return null;
+    }
   }
 
   Future<bool> addProduct(
       String title, String description, File image, double price) async {
     _isLoading = true;
     notifyListeners();
+
+   final uploadData = await uploadImage(image);
+   if (uploadData == null){
+     print('Upload failed!');
+     return false;
+   }
+
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -158,6 +182,7 @@ mixin ProductsModel on ConnectedProductsModel {
       'price': price,
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id
+      'imagePath': uploadData['imagePath']
     };
 
     try {
