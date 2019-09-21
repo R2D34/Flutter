@@ -129,7 +129,7 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  Future<Map<String, String>> uploadImage(File image,
+  Future<Map<String, dynamic>> uploadImage(File image,
       {String imagePath}) async {
     final mimeTypeData = lookupMimeType(image.path).split('/');
     final imageUploadRequest = http.MultipartRequest('POST',
@@ -181,8 +181,9 @@ mixin ProductsModel on ConnectedProductsModel {
           'https://ksr-ugc.imgix.net/assets/022/580/629/0a06c5d1ae7b18f4337864e688b1912e_original.jpg?ixlib=rb-2.1.0&w=680&fit=max&v=1537197161&auto=format&gif-q=50&q=92&s=89ddf8f2a849762fa63dede8a7fcac3b',
       'price': price,
       'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
-      'imagePath': uploadData['imagePath']
+      'userId': _authenticatedUser.id,
+      'imagePath': uploadData['imagePath'],
+      'imageUrl': uploadData['imageUrl'],
     };
 
     try {
@@ -198,7 +199,7 @@ mixin ProductsModel on ConnectedProductsModel {
           id: responseData['name'],
           title: title,
           description: description,
-          image: image,
+          image: uploadData['imageUrl'],
           price: price,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
