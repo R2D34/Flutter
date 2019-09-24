@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const cors = require('cors')({
     origin: true
 });
-const Busbuy = require('busboy');
+const Busboy = require('busboy');
 const os = require('os');
 const path = require('path');
 const fs = require('fs');
@@ -78,13 +78,13 @@ exports.storeImage = functions.https.onRequest((req, res) => {
             }
 
             return fbAdmin.auth().verifyIdToken(idToken).then(decodedToken => {
-                return bucket.upload(uploadDFata.filePath, {
+                return bucket.upload(uploadData.filePath, {
                     uploadType: 'media',
                     destination: imagePath,
                     metadata: {
                         metadata: {
-                            contentType: uploadType,
-                            firebaseStorageDownloadToken: id
+                            contentType: uploadData.type,
+                            firebaseStorageDownloadTokens: id
                         }
                     }
                 }).then(() => {

@@ -143,8 +143,13 @@ mixin ProductsModel on ConnectedProductsModel {
     if (imagePath != null) {
       imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
     }
-    imageUploadRequest.headers['Authorization'] =
-        'Bearer ${_authenticatedUser.token}';
+    imageUploadRequest.headers['authorization'] = 'Bearer ${_authenticatedUser.token}';
+
+    print(imageUploadRequest);
+        print(imageUploadRequest.headers);
+
+
+
 
     try {
       final streamedResponse = await imageUploadRequest.send();
@@ -168,11 +173,11 @@ mixin ProductsModel on ConnectedProductsModel {
     _isLoading = true;
     notifyListeners();
 
-   final uploadData = await uploadImage(image);
-   if (uploadData == null){
-     print('Upload failed!');
-     return false;
-   }
+    final uploadData = await uploadImage(image);
+    if (uploadData == null) {
+      print('Upload failed!');
+      return false;
+    }
 
     final Map<String, dynamic> productData = {
       'title': title,
