@@ -150,8 +150,8 @@ mixin ProductsModel on ConnectedProductsModel {
       final streamedResponse = await imageUploadRequest.send();
       final response = await http.Response.fromStream(streamedResponse);
       if (response.statusCode != 200 && response.statusCode != 201) {
-        print('Something went wrong');
-        print(json.decode(response.body));
+        print('Something went wrong. Not 200 and not 201');
+        print(response.body);
         return null;
       }
 
