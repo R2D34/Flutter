@@ -10,7 +10,6 @@ class ImageInput extends StatefulWidget {
 
   ImageInput(this.setImage, this.product);
 
-
   @override
   State<StatefulWidget> createState() {
     return _ImageInputState();
@@ -62,15 +61,38 @@ class _ImageInputState extends State<ImageInput> {
   @override
   Widget build(BuildContext context) {
     final buttonColor = Theme.of(context).accentColor;
+    Widget previewImage = Text('Please select and image.');
+
+    
+    if (_imageFile != null) {
+      previewImage = Image.file(
+        _imageFile,
+        fit: BoxFit.cover,
+        height: 300.0,
+        width: MediaQuery.of(context).size.width,
+        alignment: Alignment.topCenter,
+      );
+    } else if (widget.product != null) {
+      previewImage = Image.network(
+        widget.product.image,
+        fit: BoxFit.cover,
+        height: 300.0,
+        width: MediaQuery.of(context).size.width,
+        alignment: Alignment.topCenter,
+      );
+    }
+
     return Column(
       children: <Widget>[
         OutlineButton(
-          borderSide:
-              BorderSide(color: buttonColor, width: 2.0),
+          borderSide: BorderSide(color: buttonColor, width: 2.0),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(Icons.camera_alt, color: buttonColor,),
+                Icon(
+                  Icons.camera_alt,
+                  color: buttonColor,
+                ),
                 SizedBox(width: 5.0),
                 Text(
                   'Add Image',
@@ -81,18 +103,11 @@ class _ImageInputState extends State<ImageInput> {
             _openImagePicker(context);
           },
         ),
-        SizedBox(
-          height: 10.0,
-        ),
-        _imageFile == null
-            ? Text('Please pick an image.')
-            : Image.file(
-                _imageFile,
-                fit: BoxFit.cover,
-                height: 300.0,
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.topCenter,
-              )
+        SizedBox(height: 10.0),
+        previewImage,
+        // _imageFile == null
+        //     ? Text('Please pick an image.')
+        //     :
       ],
     );
   }
