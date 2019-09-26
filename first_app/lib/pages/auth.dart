@@ -74,6 +74,7 @@ class _AuthPageState extends State<AuthPage>
       child: SlideTransition(
         position: _slideAnimation,
         child: TextFormField(
+          
           decoration: InputDecoration(
             labelText: 'Confirm Password',
             filled: true,
