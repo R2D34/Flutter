@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 import 'package:scoped_model/scoped_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,7 +18,18 @@ class ProductFAB extends StatefulWidget {
   }
 }
 
-class _ProductFABState extends State<ProductFAB> {
+class _ProductFABState extends State<ProductFAB> with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(
@@ -29,46 +41,75 @@ class _ProductFABState extends State<ProductFAB> {
               height: 70.0,
               width: 56.0,
               alignment: FractionalOffset.topCenter,
-              child: FloatingActionButton(
-                backgroundColor: Theme.of(context).cardColor,
-                mini: true,
-                onPressed: () async {
-                  final url = 'mailto: ${widget.product.userEmail}';
-                  if (await canLaunch(url)){
-                    await launch(url);
-                  }
-                  else {
-                    throw 'Could not launch!';
-                  }
-                },
-                child: Icon(Icons.mail, color: Theme.of(context).primaryColor),
-                heroTag: 'contact',
+              child: ScaleTransition(
+                scale: CurvedAnimation(
+                  parent: _controller,
+                  curve: Interval(0.0, 1.0, curve: Curves.easeOut),
+                ),
+                child: FloatingActionButton(
+                  backgroundColor: Theme.of(context).cardColor,
+                  mini: true,
+                  onPressed: () async {
+                    final url = 'mailto: ${widget.product.userEmail}';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch!';
+                    }
+                  },
+                  child:
+                      Icon(Icons.mail, color: Theme.of(context).primaryColor),
+                  heroTag: 'contact',
+                ),
               ),
             ),
             Container(
               height: 70.0,
               width: 56.0,
               alignment: FractionalOffset.topCenter,
-              child: FloatingActionButton(
-                backgroundColor: Theme.of(context).cardColor,
-                mini: true,
-                onPressed: () {
-                  model.toggleProductFavoriteStatus();
-                },
-                child: Icon(
-                    model.selectedProduct.isFavorite
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: Colors.red),
-                heroTag: 'favorite',
+              child: ScaleTransition(
+                scale: CurvedAnimation(
+                  parent: _controller,
+                  curve: Interval(0.0, 0.8, curve: Curves.easeOut),
+                ),
+                child: FloatingActionButton(
+                  backgroundColor: Theme.of(context).cardColor,
+                  mini: true,
+                  onPressed: () {
+                    model.toggleProductFavoriteStatus();
+                  },
+                  child: Icon(
+                      model.selectedProduct.isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: Colors.red),
+                  heroTag: 'favorite',
+                ),
               ),
             ),
             Container(
               height: 70.0,
               width: 56.0,
               child: FloatingActionButton(
-                onPressed: () {},
-                child: Icon(Icons.more_vert),
+                onPressed: () {
+                  if (_controller.isDismissed) {
+                    _controller.forward();
+                  } else {
+                    _controller.reverse();
+                  }
+                },
+                child: AnimatedBuilder(
+                    animation: _controller,
+                    builder: (BuildContext contex, Widget child) {
+                      return Transform(
+                        alignment: FractionalOffset.center,
+                        transform: Matrix4.rotationZ(
+                            _controller.value * 0.5 * math.pi),
+                        child: Icon(_controller.isDismissed
+                            ? Icons.more_vert
+                            : Icons.close),
+                      );
+                    }),
                 heroTag: 'options',
               ),
             ),
