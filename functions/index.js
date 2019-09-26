@@ -21,7 +21,9 @@ const gcconfig = {
     keyFilename: 'flutter-products.json'
 };
 
-const {Storage} = require('@google-cloud/storage');
+const {
+    Storage
+} = require('@google-cloud/storage');
 const gcs = new Storage(gcconfig);
 
 fbAdmin.initializeApp({
@@ -103,3 +105,12 @@ exports.storeImage = functions.https.onRequest((req, res) => {
 
     });
 });
+
+exports.deleteImage = functions.database.ref('/products/{productId}').onDelete(snapshot => {
+    const imageData = snapshot.val();
+    const imagePath = imageData.imagePath;
+    const bucket = gcs.bucket('dojo-1.appspot.com');
+
+    return bucket.file(imagePath).delete();
+
+})
