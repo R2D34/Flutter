@@ -18,9 +18,15 @@ class ProductCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          TitleDefault(product.title),
-          SizedBox(width: 50.0),
-          PriceTag(product.price.toString()),
+          Flexible(
+            child: TitleDefault(product.title),
+          ),
+          Flexible(
+            child: SizedBox(width: 50.0),
+          ),
+          Flexible(
+            child: PriceTag(product.price.toString()),
+          ),
         ],
       ),
       margin: EdgeInsets.only(top: 10.0),
@@ -46,9 +52,8 @@ class ProductCard extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: Icon(product.isFavorite
-                ? Icons.favorite
-                : Icons.favorite_border),
+            icon: Icon(
+                product.isFavorite ? Icons.favorite : Icons.favorite_border),
             iconSize: 50.0,
             color: Colors.red,
             onPressed: () {
