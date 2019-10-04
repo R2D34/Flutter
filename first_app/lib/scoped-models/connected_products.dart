@@ -313,6 +313,8 @@ mixin ProductsModel on ConnectedProductsModel {
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
     }
+      selectProduct(null); // Unselect after toggle in order to have clear view in CreateProduct
+
   }
 
   void selectProduct(String productId) {
