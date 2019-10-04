@@ -43,6 +43,7 @@ class _MyAppState extends State<MyApp> {
     return ScopedModel<MainModel>(
       model: _model,
       child: MaterialApp(
+        title: 'OlxLikeShop',
         theme: ThemeData(
             primarySwatch: Colors.deepPurple, accentColor: Colors.deepOrange),
         //home: AuthPage(),
