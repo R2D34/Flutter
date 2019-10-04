@@ -68,7 +68,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
     return http
         .delete(
-            'https://dojo-1.firebaseio.com/products/${deletedProductId}.json?auth=${_authenticatedUser.token}')
+            'https://dojo-1.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -80,10 +80,12 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  Future<Null> fetchProducts({onlyForUser = false}) {
+  Future<Null> fetchProducts({onlyForUser = false, clearExisting = false}) {
     print('Loading Products');
     _isLoading = true;
-    _products = [];
+    if (clearExisting) {
+      _products = [];
+    }
     notifyListeners();
     return http
         .get(
@@ -248,7 +250,7 @@ mixin ProductsModel on ConnectedProductsModel {
       'userId': selectedProduct.userId
     };
     try {
-      final http.Response response = await http.put(
+      await http.put(
           'https://dojo-1.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
           body: json.encode(updateData));
 
@@ -313,8 +315,8 @@ mixin ProductsModel on ConnectedProductsModel {
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
     }
-      selectProduct(null); // Unselect after toggle in order to have clear view in CreateProduct
-
+    selectProduct(
+        null); // Unselect after toggle in order to have clear view in CreateProduct
   }
 
   void selectProduct(String productId) {

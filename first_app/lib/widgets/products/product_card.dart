@@ -81,11 +81,12 @@ class ProductCard extends StatelessWidget {
             ),
           ),
           _buildTitlePriceRow(),
+          SizedBox(height: 10.0,),
           AddressTag('The Lair of Bluescaled Dragons'),
           _buildActionButtons(context),
         ],
       ),
     );
-    ;
+    
   }
 }

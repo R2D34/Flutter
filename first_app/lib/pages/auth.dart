@@ -61,6 +61,7 @@ class _AuthPageState extends State<AuthPage>
         if (value.isEmpty) {
           return 'Emails is required.';
         }
+        return null;
       },
       onSaved: (String value) {
         _dataForm['emailValue'] = value;
@@ -86,6 +87,8 @@ class _AuthPageState extends State<AuthPage>
                 _authMode == AuthMode.Signup) {
               return 'Password do not match';
             }
+        return null;
+
           },
         ),
       ),
@@ -108,6 +111,8 @@ class _AuthPageState extends State<AuthPage>
         if (value.isEmpty) {
           return 'Password is required.';
         }
+        return null;
+
       },
     );
   }
