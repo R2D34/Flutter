@@ -21,3 +21,4 @@ doc/api/
 *.js.map
 first_app/android/key.propereties
 first_app/android/key.properties
+first_app/android/app/keys/key.jks
