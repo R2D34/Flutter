@@ -20,6 +20,7 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   void initState() {
     widget.model.fetchProducts(onlyForUser: true, clearExisting: true);
+    widget.model.getAirSensorStatus();
 
     super.initState();
   }
