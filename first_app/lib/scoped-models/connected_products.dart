@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
@@ -60,6 +63,27 @@ mixin ConnectedProductsModel on Model {
 mixin ProductsModel on ConnectedProductsModel {
   bool _showFavorites = false;
 
+  Future<Map<String, String>> getAirSensorStatus() async {
+    print("Getting Air Sensor");
+
+    http.Response response =
+        await http.get('http://192.168.0.5/api/device/state');
+        print("Status code  " + "${response.statusCode}");
+
+    try {
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        print("Something went wrong. Status not 200 and not 201 for AirSensor");
+        return null;
+      }
+      final responseData = json.decode(response.body);
+
+      return responseData;
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
   List<Product> get allProducts {
     return List.from(_products);
   }
@@ -104,7 +128,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
     return http
         .delete(
-            'https://dojo-1.firebaseio.com/products/${deletedProductId}.json?auth=${_authenticatedUser.token}')
+            'https://dojo-1.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -116,11 +140,12 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  Future<Null> fetchProducts({onlyForUser = false}) {
-    
+  Future<Null> fetchProducts({onlyForUser = false, clearExisting = false}) {
     print('Loading Products');
     _isLoading = true;
-    _products = [];
+    if (clearExisting) {
+      _products = [];
+    }
     notifyListeners();
     return http
         .get(
@@ -139,7 +164,8 @@ mixin ProductsModel on ConnectedProductsModel {
             id: productId,
             title: productData['title'],
             description: productData['description'],
-            image: productData['image'],
+            image: productData['imageUrl'],
+            imagePath: productData['imagePath'],
             price: productData['price'],
             userEmail: productData['userEmail'],
             userId: productData['userId'],
@@ -149,9 +175,11 @@ mixin ProductsModel on ConnectedProductsModel {
                     .containsKey(_authenticatedUser.id));
         fetchedProductList.add(product);
       });
-      _products = onlyForUser ? fetchedProductList.where((Product product) {
-        return product.userId == _authenticatedUser.id;
-      }).toList() : fetchedProductList;
+      _products = onlyForUser
+          ? fetchedProductList.where((Product product) {
+              return product.userId == _authenticatedUser.id;
+            }).toList()
+          : fetchedProductList;
       _isLoading = false;
       print('Finished loading products');
 
@@ -164,18 +192,62 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
+  Future<Map<String, dynamic>> uploadImage(File image,
+      {String imagePath}) async {
+    final mimeTypeData = lookupMimeType(image.path).split('/');
+    final imageUploadRequest = http.MultipartRequest('POST',
+        Uri.parse('https://us-central1-dojo-1.cloudfunctions.net/storeImage'));
+    final file = await http.MultipartFile.fromPath(
+      'image',
+      image.path,
+      contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
+    );
+    imageUploadRequest.files.add(file);
+    if (imagePath != null) {
+      imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
+    }
+    imageUploadRequest.headers['authorization'] =
+        'Bearer ${_authenticatedUser.token}';
+
+    print(imageUploadRequest);
+    print(imageUploadRequest.headers);
+
+    try {
+      final streamedResponse = await imageUploadRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        print('Something went wrong. Not 200 and not 201');
+        print(response.body);
+        return null;
+      }
+
+      final responseData = json.decode(response.body);
+      return responseData;
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
   Future<bool> addProduct(
-      String title, String description, String image, double price) async {
+      String title, String description, File image, double price) async {
     _isLoading = true;
     notifyListeners();
+
+    final uploadData = await uploadImage(image);
+    if (uploadData == null) {
+      print('Upload failed!');
+      return false;
+    }
+
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
-      'image':
-          'https://ksr-ugc.imgix.net/assets/022/580/629/0a06c5d1ae7b18f4337864e688b1912e_original.jpg?ixlib=rb-2.1.0&w=680&fit=max&v=1537197161&auto=format&gif-q=50&q=92&s=89ddf8f2a849762fa63dede8a7fcac3b',
       'price': price,
       'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
+      'userId': _authenticatedUser.id,
+      'imagePath': uploadData['imagePath'],
+      'imageUrl': uploadData['imageUrl'],
     };
 
     try {
@@ -191,7 +263,8 @@ mixin ProductsModel on ConnectedProductsModel {
           id: responseData['name'],
           title: title,
           description: description,
-          image: image,
+          image: uploadData['imageUrl'],
+          imagePath: uploadData['imagePath'],
           price: price,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
@@ -210,42 +283,56 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   Future<bool> updateProduct(
-      String title, String description, String image, double price) {
+      String title, String description, File image, double price) async {
     _isLoading = true;
     notifyListeners();
+    String imageUrl = selectedProduct.image;
+    String imagePath = selectedProduct.imagePath;
+
+    if (image != null) {
+      final uploadData = await uploadImage(image);
+      if (uploadData == null) {
+        print('Upload failed!');
+        return false;
+      }
+
+      imageUrl = uploadData['imageUrl'];
+      imagePath = uploadData['imagePath'];
+    }
+
     final Map<String, dynamic> updateData = {
       'title': title,
       'description': description,
-      'image':
-          'https://ksr-ugc.imgix.net/assets/022/580/629/0a06c5d1ae7b18f4337864e688b1912e_original.jpg?ixlib=rb-2.1.0&w=680&fit=max&v=1537197161&auto=format&gif-q=50&q=92&s=89ddf8f2a849762fa63dede8a7fcac3b',
+      'imageUrl': imageUrl,
+      'imagePath': imagePath,
       'price': price,
       'userEmail': selectedProduct.userEmail,
       'userId': selectedProduct.userId
     };
-    return http
-        .put(
-            'https://dojo-1.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
-            body: json.encode(updateData))
-        .then((http.Response response) {
+    try {
+      await http.put(
+          'https://dojo-1.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
+          body: json.encode(updateData));
+
       _isLoading = false;
 
       final Product updatedProduct = Product(
           id: selectedProduct.id,
           title: title,
           description: description,
-          image: image,
+          image: imageUrl,
+          imagePath: imagePath,
           price: price,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
       return true;
-    }).catchError((error) {
+    } catch (error) {
       _isLoading = false;
       notifyListeners();
       return false;
-    });
-    ;
+    }
   }
 
   void toggleProductFavoriteStatus() async {
@@ -258,6 +345,7 @@ mixin ProductsModel on ConnectedProductsModel {
         description: selectedProduct.description,
         price: selectedProduct.price,
         image: selectedProduct.image,
+        imagePath: selectedProduct.imagePath,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteStatus);
@@ -280,17 +368,22 @@ mixin ProductsModel on ConnectedProductsModel {
           description: selectedProduct.description,
           price: selectedProduct.price,
           image: selectedProduct.image,
+          imagePath: selectedProduct.imagePath,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId,
           isFavorite: !newFavoriteStatus);
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
     }
+    selectProduct(
+        null); // Unselect after toggle in order to have clear view in CreateProduct
   }
 
   void selectProduct(String productId) {
     _selProductId = productId;
-    notifyListeners();
+    if (productId != null) {
+      notifyListeners();
+    }
   }
 
   void toggleDisplayMode() {
@@ -337,25 +430,27 @@ mixin UserModel on ConnectedProductsModel {
     }
 
     final Map<String, dynamic> responseData = json.decode(response.body);
-
+    print(responseData);
     bool hasError = true;
     String message = 'Something went wrong';
-    _authenticatedUser = User(
-        id: responseData['localId'],
-        email: email,
-        token: responseData['idToken']);
-    setAuthTimeout(int.parse(responseData['expiresIn']));
-    _userSubject.add(true);
 
-    final DateTime now = DateTime.now();
-    final DateTime expiryTime =
-        now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', responseData['idToken']);
-    prefs.setString('userEmail', email);
-    prefs.setString('userId', responseData['localId']);
-    prefs.setString('expiryTime', expiryTime.toIso8601String());
     if (responseData.containsKey('idToken')) {
+      _authenticatedUser = User(
+          id: responseData['localId'],
+          email: email,
+          token: responseData['idToken']);
+
+      setAuthTimeout(int.parse(responseData['expiresIn']));
+      _userSubject.add(true);
+
+      final DateTime now = DateTime.now();
+      final DateTime expiryTime =
+          now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', responseData['idToken']);
+      prefs.setString('userEmail', email);
+      prefs.setString('userId', responseData['localId']);
+      prefs.setString('expiryTime', expiryTime.toIso8601String());
       hasError = false;
       message = 'Authentication Succeeded!';
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
@@ -401,6 +496,7 @@ mixin UserModel on ConnectedProductsModel {
     _authenticatedUser = null;
     _authTimer.cancel();
     _userSubject.add(false);
+    _selProductId = null;
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');

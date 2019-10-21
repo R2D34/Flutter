@@ -1,4 +1,4 @@
-package com.example.first_app;
+package com.example.FlutterShoppino;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

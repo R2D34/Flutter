@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 
 import 'package:scoped_model/scoped_model.dart';
 
-
+import '../widgets/form_inputs/image.dart';
 import '../scoped-models/main.dart';
 
 class ProductEditPage extends StatefulWidget {
@@ -18,18 +20,36 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/Pixel_Night_Town.gif'
+    'image': null
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _titleTextController = TextEditingController();
+  final _descriptionTextController = TextEditingController();
+  final _priceTextController = TextEditingController();
 
   Widget _buildTitleTextField(Product product) {
+    if (product == null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = '';
+    } else if (product != null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = product.title;
+    } else if (product != null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else if (product == null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else {
+      _titleTextController.text = '';
+    }
+
     return TextFormField(
       decoration: InputDecoration(labelText: 'Name of Dragon'),
-      initialValue: product == null ? '' : product.title,
+      // initialValue: product == null ? '' : product.title,
+      controller: _titleTextController,
       validator: (String value) {
         if (value.isEmpty || value.length < 5) {
           return 'Title is required and should be 5+ characters long.';
         }
+        return null;
+
       },
       onSaved: (String value) {
         _formData['title'] = value;
@@ -38,13 +58,22 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildDescriptionTextField(Product product) {
+    if (product == null && _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = '';
+    } else if (product != null &&
+        _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = product.description;
+    }
     return TextFormField(
       maxLines: 4,
-      initialValue: product == null ? '' : product.description,
+      // initialValue: product == null ? '' : product.description,
+      controller: _descriptionTextController,
       validator: (String value) {
         if (value.isEmpty || value.length < 10) {
           return 'Description is required and should be 10+ characters long.';
         }
+        return null;
+
       },
       decoration: InputDecoration(labelText: 'Description of Dragon'),
       onSaved: (String value) {
@@ -54,35 +83,46 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildPriceTextField(Product product) {
+    if (product == null && _priceTextController.text.trim() == '') {
+      _priceTextController.text = '';
+    } else if (product != null &&
+        _priceTextController.text.trim() == '') {
+      _priceTextController.text = product.price.toString();
+    }
     return TextFormField(
+      controller: _priceTextController,
       decoration: InputDecoration(labelText: 'Price'),
-      initialValue: product == null ? '' : product.price.toString(),
+      // initialValue: product == null ? '' : product.price.toString(),
       validator: (String value) {
         if (value.isEmpty ||
-            !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
-          return 'Title is required and should be a number.';
+            !RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
+          return 'Price is required and should be a number.';
         }
+        return null;
+
       },
-      onSaved: (String value) {
-        _formData['price'] = double.parse(value);
-      },
+      
       keyboardType: TextInputType.number,
     );
+  }
+
+  void _setImage(File image) {
+    _formData['image'] = image;
   }
 
   void _submitForm(
       Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState.validate() || (_formData['image'] == null && selectedProductIndex == -1)) {
       return;
     }
     _formKey.currentState.save();
     if (selectedProductIndex == -1) {
       addProduct(
-        _formData['title'],
-        _formData['description'],
+        _titleTextController.text,
+        _descriptionTextController.text,
         _formData['image'],
-        _formData['price'],
+        double.parse(_priceTextController.text.replaceFirst(RegExp(r','), '.')),
       ).then((bool success) {
         {
           if (success) {
@@ -107,13 +147,13 @@ class _ProductEditPageState extends State<ProductEditPage> {
       });
     } else {
       updateProduct(
-        _formData['title'],
-        _formData['description'],
+        _titleTextController.text,
+        _descriptionTextController.text,
         _formData['image'],
-        _formData['price'],
+        double.parse(_priceTextController.text.replaceFirst(RegExp(r','), '.')),
       ).then((_) => Navigator.pushReplacementNamed(context, '/')
           .then((_) => setSelectedProduct(null)));
-      ;
+      
     }
   }
 
@@ -156,6 +196,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               SizedBox(
                 height: 10.0,
               ),
+              ImageInput(_setImage, product),
               SizedBox(
                 height: 10.0,
               ),

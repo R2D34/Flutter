@@ -5,8 +5,6 @@ import 'package:scoped_model/scoped_model.dart';
 import '../scoped-models/main.dart';
 import '../models/auth.dart';
 
-
-
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -14,7 +12,8 @@ class AuthPage extends StatefulWidget {
   }
 }
 
-class _AuthPageState extends State<AuthPage> {
+class _AuthPageState extends State<AuthPage>
+    with SingleTickerProviderStateMixin {
   final Map<String, dynamic> _dataForm = {
     'emailValue': null,
     'passwordValue': null
@@ -23,6 +22,21 @@ class _AuthPageState extends State<AuthPage> {
   final TextEditingController _passwordTextController = TextEditingController();
 
   AuthMode _authMode = AuthMode.Login;
+
+  AnimationController _controller;
+  Animation<Offset> _slideAnimation;
+
+  void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+    _slideAnimation =
+        Tween<Offset>(begin: Offset(0.0, -2.0), end: Offset(0.0, 0.0)).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
+    );
+    super.initState();
+  }
 
   bool _acceptTerms = false;
 
@@ -47,6 +61,7 @@ class _AuthPageState extends State<AuthPage> {
         if (value.isEmpty) {
           return 'Emails is required.';
         }
+        return null;
       },
       onSaved: (String value) {
         _dataForm['emailValue'] = value;
@@ -55,18 +70,28 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildPasswordConfirmTextField() {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: 'Confirm Password',
-        filled: true,
-        fillColor: Colors.white,
+    return FadeTransition(
+      opacity: CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: TextFormField(
+          
+          decoration: InputDecoration(
+            labelText: 'Confirm Password',
+            filled: true,
+            fillColor: Colors.white,
+          ),
+          obscureText: true,
+          validator: (String value) {
+            if (_passwordTextController.text != value &&
+                _authMode == AuthMode.Signup) {
+              return 'Password do not match';
+            }
+        return null;
+
+          },
+        ),
       ),
-      obscureText: true,
-      validator: (String value) {
-        if (_passwordTextController.text != value) {
-          return 'Password do not match';
-        }
-      },
     );
   }
 
@@ -86,6 +111,8 @@ class _AuthPageState extends State<AuthPage> {
         if (value.isEmpty) {
           return 'Password is required.';
         }
+        return null;
+
       },
     );
   }
@@ -109,29 +136,28 @@ class _AuthPageState extends State<AuthPage> {
       _formKey.currentState.save();
       print(_dataForm);
       Map<String, dynamic> successInformation;
-        successInformation =
-            await authenticate(_dataForm['emailValue'], _dataForm['passwordValue'], _authMode);
-        if (!successInformation['success']) {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('An error occured!'),
-                  content: Text(successInformation['message']),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('Okay'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                );
-              });
-        }
+      successInformation = await authenticate(
+          _dataForm['emailValue'], _dataForm['passwordValue'], _authMode);
+      if (!successInformation['success']) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('An error occured!'),
+                content: Text(successInformation['message']),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Okay'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
       }
     }
-  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,20 +185,24 @@ class _AuthPageState extends State<AuthPage> {
                     SizedBox(height: 10.0),
                     _buildPasswordTextField(),
                     SizedBox(height: 10.0),
-                    _authMode == AuthMode.Signup
-                        ? _buildPasswordConfirmTextField()
-                        : Container(),
+                    _buildPasswordConfirmTextField(),
                     _buildAcceptSwitch(),
                     SizedBox(height: 10.0),
                     FlatButton(
                       child: Text(
                           'Switch to ${_authMode == AuthMode.Login ? 'Signup' : 'Login'}'),
                       onPressed: () {
-                        setState(() {
-                          _authMode = _authMode == AuthMode.Login
-                              ? AuthMode.Signup
-                              : AuthMode.Login;
-                        });
+                        if (_authMode == AuthMode.Login) {
+                          setState(() {
+                            _authMode = AuthMode.Signup;
+                          });
+                          _controller.forward();
+                        } else {
+                          setState(() {
+                            _authMode = AuthMode.Login;
+                          });
+                          _controller.reverse();
+                        }
                       },
                     ),
                     SizedBox(height: 10.0),
@@ -186,8 +216,7 @@ class _AuthPageState extends State<AuthPage> {
                               child: Text(_authMode == AuthMode.Login
                                   ? 'LOGIN'
                                   : 'SIGN UP'),
-                              onPressed: () =>
-                                  _submitForm(model.authenticate),
+                              onPressed: () => _submitForm(model.authenticate),
                             );
                     })
                   ],

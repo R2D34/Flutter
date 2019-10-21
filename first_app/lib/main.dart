@@ -9,6 +9,7 @@ import 'pages/manage_products.dart';
 import 'pages/product.dart';
 import './scoped-models/main.dart';
 import './models/product.dart';
+import './widgets/helpers/custom_route.dart';
 
 void main() {
   //MapView.setApiKey('AIzaSyCzvJ5yU2S8y6Er96gpY5EIMx7HIGgUNHo');
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
     return ScopedModel<MainModel>(
       model: _model,
       child: MaterialApp(
+        title: 'OlxLikeShop',
         theme: ThemeData(
             primarySwatch: Colors.deepPurple, accentColor: Colors.deepOrange),
         //home: AuthPage(),
@@ -69,7 +71,7 @@ class _MyAppState extends State<MyApp> {
                 _model.allProducts.firstWhere((Product product) {
               return product.id == productId;
             });
-            return MaterialPageRoute<bool>(
+            return CustomRoute<bool>(
               builder: (BuildContext context) => !_isAuthenticated ? AuthPage() : ProductPage(product),
             );
           }
