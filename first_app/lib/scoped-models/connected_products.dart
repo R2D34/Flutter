@@ -20,44 +20,45 @@ mixin ConnectedProductsModel on Model {
   String _selProductId;
   bool _isLoading = false;
 
-  Future<bool> addProduct(
-      String title, String description, String image, double price) {
-    _isLoading = true;
-    notifyListeners();
-    final Map<String, dynamic> productData = {
-      'title': title,
-      'description': description,
-      'image':
-          'https://ksr-ugc.imgix.net/assets/022/580/629/0a06c5d1ae7b18f4337864e688b1912e_original.jpg?ixlib=rb-2.1.0&w=680&fit=max&v=1537197161&auto=format&gif-q=50&q=92&s=89ddf8f2a849762fa63dede8a7fcac3b',
-      'price': price,
-      'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
-    };
+  // Future<bool> addProduct(
+  //     String title, String description, String image, double price) {
+  //   _isLoading = true;
+  //   notifyListeners();
+  //   final Map<String, dynamic> productData = {
+  //     'title': title,
+  //     'description': description,
+  //     'image':
+  //         'https://ksr-ugc.imgix.net/assets/022/580/629/0a06c5d1ae7b18f4337864e688b1912e_original.jpg?ixlib=rb-2.1.0&w=680&fit=max&v=1537197161&auto=format&gif-q=50&q=92&s=89ddf8f2a849762fa63dede8a7fcac3b',
+  //     'price': price,
+  //     'userEmail': _authenticatedUser.email,
+  //     'userId': _authenticatedUser.id
+  //   };
 
-    return http
-        .post('https://dojo-1.firebaseio.com/products.json',
-            body: json.encode(productData))
-        .then((http.Response response) {
-          if(response.statusCode != 200 && response.statusCode != 201){
-            _isLoading = false;
-            notifyListeners();
-            return false;
-          }
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      final Product newProduct = Product(
-          id: responseData['name'],
-          title: title,
-          description: description,
-          image: image,
-          price: price,
-          userEmail: _authenticatedUser.email,
-          userId: _authenticatedUser.id);
-      _products.add(newProduct);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    });
-  }
+  //   return http
+  //       .post('https://dojo-1.firebaseio.com/products.json',
+  //           body: json.encode(productData))
+  //       .then((http.Response response) {
+  //         if(response.statusCode != 200 && response.statusCode != 201){
+  //           _isLoading = false;
+  //           notifyListeners();
+  //           return false;
+  //         }
+  //     final Map<String, dynamic> responseData = json.decode(response.body);
+  //     final Product newProduct = Product(
+  //         id: responseData['name'],
+  //         title: title,
+  //         description: description,
+  //         image: image,
+  //         imagePath: responseData['image'],
+  //         price: price,
+  //         userEmail: _authenticatedUser.email,
+  //         userId: _authenticatedUser.id);
+  //     _products.add(newProduct);
+  //     _isLoading = false;
+  //     notifyListeners();
+  //     return true;
+  //   });
+  // }
 }
 
 mixin ProductsModel on ConnectedProductsModel {
