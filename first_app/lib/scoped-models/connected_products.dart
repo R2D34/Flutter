@@ -64,26 +64,6 @@ mixin ConnectedProductsModel on Model {
 mixin ProductsModel on ConnectedProductsModel {
   bool _showFavorites = false;
 
-  Future<Map<String, String>> getAirSensorStatus() async {
-    print("Getting Air Sensor");
-
-    http.Response response =
-        await http.get('http://192.168.0.5/api/device/state');
-        print("Status code  " + "${response.statusCode}");
-
-    try {
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        print("Something went wrong. Status not 200 and not 201 for AirSensor");
-        return null;
-      }
-      final responseData = json.decode(response.body);
-
-      return responseData;
-    } catch (error) {
-      print(error);
-      return null;
-    }
-  }
 
   List<Product> get allProducts {
     return List.from(_products);

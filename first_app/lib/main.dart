@@ -12,7 +12,6 @@ import './models/product.dart';
 import './widgets/helpers/custom_route.dart';
 
 void main() {
-  //MapView.setApiKey('AIzaSyCzvJ5yU2S8y6Er96gpY5EIMx7HIGgUNHo');
   runApp(MyApp());
 }
 class MyApp extends StatefulWidget {
