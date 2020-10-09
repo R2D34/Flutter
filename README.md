@@ -4,7 +4,7 @@
 I have built this app as a part of my "learning tour with flutter".
 
 
-##It includes the following functionality:
+## It includes the following functionality:
 
 
 ### App side
