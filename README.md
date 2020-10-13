@@ -1,5 +1,7 @@
 # Imaginary Dragon Auctions (Shop like app)
 
+![Screens collage](https://github.com/Tsubanee/Flutter/blob/master/Dragon%20auction%20app.png)
+
 ### Built with flutter and firebase for android (would also work on iOS and web with current flutter version and minior edits).
 
 
@@ -28,10 +30,7 @@ I have built this app as a part of my "learning tour with flutter".
 
 ## Screenshots from app
 
-![Screen 1](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-160608.jpg)
-![Screen 2](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-160642.jpg)
-![Screen 3](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-161021.jpg)
-![Screen 4](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-161032.jpg)
-![Screen 5](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-161119.jpg)
+![Screen 1](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-160608.jpg){:width= "500px"}
+
 
 
