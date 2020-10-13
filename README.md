@@ -26,3 +26,12 @@ I have built this app as a part of my "learning tour with flutter".
 - Properly refactored code
 - State management with scoped-model
 
+## Screenshots from app
+
+![Screen 1](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-160608.jpg)
+![Screen 2](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-160642.jpg)
+![Screen 3](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-161021.jpg)
+![Screen 4](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-161032.jpg)
+![Screen 5](https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-161119.jpg)
+
+
