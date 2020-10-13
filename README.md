@@ -20,6 +20,7 @@ I have built this app as a part of my "learning tour with flutter".
 - Smooth transitions between pages
 - Sidebar and cards navigation
 - Animated buttons
+- Utilizing native device feautures (camera)
 - Accepting images in google storage through the node js function on firebase functions
 
 
