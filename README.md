@@ -28,9 +28,5 @@ I have built this app as a part of my "learning tour with flutter".
 - Properly refactored code
 - State management with scoped-model
 
-## Screenshots from app
-<img src="https://github.com/Tsubanee/Flutter/blob/master/Screenshot_20201005-160608.jpg" width="250" height="500">
-
-
 
 
