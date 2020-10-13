@@ -1,4 +1,6 @@
-# Imaginary Dragon Auctions (Shop like app) built with flutter and firebase for android (would also work on iOS and web with current flutter version and minior edits).
+# Imaginary Dragon Auctions (Shop like app)
+
+### Built with flutter and firebase for android (would also work on iOS and web with current flutter version and minior edits).
 
 
 I have built this app as a part of my "learning tour with flutter".
