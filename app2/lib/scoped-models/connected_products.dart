@@ -14,6 +14,8 @@ import '../models/product.dart';
 import '../models/user.dart';
 import '../models/auth.dart';
 
+import '../globals/global_config.dart';
+
 mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
   User _authenticatedUser;
@@ -63,7 +65,6 @@ mixin ConnectedProductsModel on Model {
 
 mixin ProductsModel on ConnectedProductsModel {
   bool _showFavorites = false;
-
 
   List<Product> get allProducts {
     return List.from(_products);
@@ -399,12 +400,12 @@ mixin UserModel on ConnectedProductsModel {
     http.Response response;
     if (mode == AuthMode.Login) {
       response = await http.post(
-          'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCodUCc1m_c-dcfnaFwjO5t_rFj6gmu3Yw',
+          'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$apiKey',
           body: json.encode(authData),
           headers: {'Content-Type': 'application/json'});
     } else {
       response = await http.post(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCodUCc1m_c-dcfnaFwjO5t_rFj6gmu3Yw',
+        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey}',
         body: json.encode(authData),
         headers: {'Content-Type': 'application/json'},
       );

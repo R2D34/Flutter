@@ -39,3 +39,7 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+
+
+#Potential secrets
+lib/globals/global_config.dart
