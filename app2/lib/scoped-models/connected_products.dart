@@ -405,7 +405,7 @@ mixin UserModel on ConnectedProductsModel {
           headers: {'Content-Type': 'application/json'});
     } else {
       response = await http.post(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey}',
+        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey',
         body: json.encode(authData),
         headers: {'Content-Type': 'application/json'},
       );
@@ -413,6 +413,7 @@ mixin UserModel on ConnectedProductsModel {
 
     final Map<String, dynamic> responseData = json.decode(response.body);
     print(responseData);
+    print(apiKey);
     bool hasError = true;
     String message = 'Something went wrong';
 
